@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+:root {
+  --bg-color: #0d1117;
+  --paper-base: #e2dac7; 
+  --paper-stain: #d4ccb8; 
+  --accent: #f85149;
+  --text-dark: #2a2a2a;
+  --text-bright: #ffffff;
+  --border: #444c56;
+}
+
+body {
+  margin: 0; padding: 0; 
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  background-image: url('background.jpg');
+  background-attachment: fixed; 
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 800px) {
+  .nav-container { flex-direction: column; height: auto !important; padding: 15px !important; }
+  .vault-logo { position: static !important; max-width: 150px !important; margin-bottom: 10px; }
+  .nav-links { gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+  .reading-room { margin: 20px auto !important; width: 95% !important; padding: 40px 20px !important; border-radius: 15px !important; }
+  .main-nav { height: auto !important; }
+  h1 { font-size: 1.8rem !important; }
+}
+
+.main-nav { 
+    background: rgba(13, 17, 23, 0.9); 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 1000; height: 110px;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 30px; height: 100%; }
+.vault-logo { max-width: 210px; position: absolute; top: 15px; left: 0; filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); cursor: pointer; transition: transform 0.3s ease; z-index: 1001; }
+
+.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+.nav-links a { color: var(--text-bright); text-decoration: none; font-size: 0.9rem; text-transform: lowercase; }
+
+.reading-room { 
+    background-color: var(--paper-base);
+    background-image: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(0,0,0,0.04) 0%, transparent 50%), linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.05) 5%, transparent 15%);
+    color: var(--text-dark); 
+    max-width: 700px; margin: 60px 8% 80px auto; padding: 80px 70px; font-family: 'Lora', serif; border-radius: 8px 45px 35px 15px / 20px 15px 40px 10px; box-shadow: 30px 30px 70px rgba(0,0,0,0.7); position: relative; border: 1px solid rgba(0,0,0,0.1);
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #111; margin-bottom: 35px; text-align: center; font-style: italic; font-weight: 600; }
+.content { font-size: 1.05rem; line-height: 1.7; text-align: justify; }
+
+.archive-layout { display: flex; flex-direction: column; max-width: 1400px; margin: 60px auto; gap: 40px; padding: 0 30px; }
+.archive-card { background: var(--paper-base); padding: 30px; border-radius: 10px; margin-bottom: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.4); }
+#searchInput { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 30px; }
+</style>
+</style>
+</head>
+<body class="content-page">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-wrapper"><img src="logo.png" onclick="goToRandom()" class="vault-logo"></div>
+            <ul class="nav-links">
+                <li><a href="index.html">hem</a></li>
+                <li><a href="arkiv.html">sök</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="reading-room"><h1>American Cyborg - Steel Warrior</h1><div class="content">Titel: American Cyborg - Steel Warrior <br> I don't know what gets into me sometimes. When I rented this film in my local videostore, I got the impression that it was Cyborg 2. So what? Blow me. Everbody is entitled to do mistakes, even me. I really like the post-apocalypse films. Mad Max 1-2, Hardware, Bronx Warriors or even 2019-After the Fall of New York. But this one really sucked! Strangely enough it has it all, cyborgs, cannibal mutants, action, a large chested heroine and a noble as hell hero. The story: Women can't have babies. Mary can. She must get to Europe to raise the snotty little thing. She must get through the city alive first. A cyborg is at her tail. A hero Austin (Joe Lara from Dr MacQuinn fame) is in the neighberhood and decides to help her. They run for a while. Then they hide for a while. Then they fight karate for a while. Then they run for a while, and it goes on and on and on and on... Sounds like fun kids? It's not. Austin looks like he is more concerned about his looks, Mary from a porno flick and the cyborg. Oh, the cyborg. Gee, this is a real homo-looking gay (pardon the joke!) fully equipped with taight leather jeans and leatherjacket. Schwarzenegger might look cool dressed like that, but John Ryan looks like someone out of the Village People. There are three assets in the film though, two of them belong to the heroine and the third is that Bob Keen and Image Animation did the special effects. But I guess they want to forget that they ever heard about this film. I know I want. What the asshole who directed this mess is called, I didn't bother to check out. Some of you sickos out there might like this mess, but I recommend Nemesis instead.</div></div>
+</body>
+</html>

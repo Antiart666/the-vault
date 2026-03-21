@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+:root {
+  --bg-color: #0d1117;
+  --paper-base: #e2dac7; 
+  --paper-stain: #d4ccb8; 
+  --accent: #f85149;
+  --text-dark: #2a2a2a;
+  --text-bright: #ffffff;
+  --border: #444c56;
+}
+
+body {
+  margin: 0; padding: 0; 
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  background-image: url('background.jpg');
+  background-attachment: fixed; 
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 800px) {
+  .nav-container { flex-direction: column; height: auto !important; padding: 15px !important; }
+  .vault-logo { position: static !important; max-width: 150px !important; margin-bottom: 10px; }
+  .nav-links { gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+  .reading-room { margin: 20px auto !important; width: 95% !important; padding: 40px 20px !important; border-radius: 15px !important; }
+  .main-nav { height: auto !important; }
+  h1 { font-size: 1.8rem !important; }
+}
+
+.main-nav { 
+    background: rgba(13, 17, 23, 0.9); 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 1000; height: 110px;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 30px; height: 100%; }
+.vault-logo { max-width: 210px; position: absolute; top: 15px; left: 0; filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); cursor: pointer; transition: transform 0.3s ease; z-index: 1001; }
+
+.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+.nav-links a { color: var(--text-bright); text-decoration: none; font-size: 0.9rem; text-transform: lowercase; }
+
+.reading-room { 
+    background-color: var(--paper-base);
+    background-image: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(0,0,0,0.04) 0%, transparent 50%), linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.05) 5%, transparent 15%);
+    color: var(--text-dark); 
+    max-width: 700px; margin: 60px 8% 80px auto; padding: 80px 70px; font-family: 'Lora', serif; border-radius: 8px 45px 35px 15px / 20px 15px 40px 10px; box-shadow: 30px 30px 70px rgba(0,0,0,0.7); position: relative; border: 1px solid rgba(0,0,0,0.1);
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #111; margin-bottom: 35px; text-align: center; font-style: italic; font-weight: 600; }
+.content { font-size: 1.05rem; line-height: 1.7; text-align: justify; }
+
+.archive-layout { display: flex; flex-direction: column; max-width: 1400px; margin: 60px auto; gap: 40px; padding: 0 30px; }
+.archive-card { background: var(--paper-base); padding: 30px; border-radius: 10px; margin-bottom: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.4); }
+#searchInput { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 30px; }
+</style>
+</style>
+</head>
+<body class="content-page">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-wrapper"><img src="logo.png" onclick="goToRandom()" class="vault-logo"></div>
+            <ul class="nav-links">
+                <li><a href="index.html">hem</a></li>
+                <li><a href="arkiv.html">sök</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="reading-room"><h1>Evil Dead Trap 2</h1><div class="content">Titel: Evil Dead Trap 2<br> If Evil Dead Trap was in its way a homage and extension of the slasher genre, Evil Dead Trap 2 pays its tributes to the complex narratives of David Lynch and David Cronenberg. Evil Dead Trap 2 is definitive not a brainless "high concept" movie like Armageddon or X-Men, instead it demands that the viewer pays attention to the film's narrative, the twists of the plot and that he/she believes in the unexplainable. As with Lynch's Eraserhead or Cronenberg's The Naked Lunch, director Isou Hashimoto lets the film slide into unexpected narratives, but not by elaborate special effects or inventive cutting techniques. Instead the film takes its time and in a slow pace the story about friendship, relationship and a complex maze of insanity and violence between three main players take place. In Tokyo young girls are found mutilated in horrible ways and the killer doesn't seem to make any mistakes and therefore the police can't catch him. TV-reporter Aimi (Rie Kondou), a former pop-singer who wants to be a serious reporter covers the story, but also wants to harass her high school friend Aki (Youko Nakagima) and taunt her for her choices in life. Aki is over-weight and has problems with her social life. She works as a projectionist at a cinema and sometimes, when she looks out from the projectionist booth, she sees a strange child in the theatre that seems to look her straight into the eyes. Aimi introduces Aki to her lover Kurashi (Shirou Sano). Kurashi seems to be a self-confident man and it turns out that he is married. It seems that he and his wife has lost their child, Hideki, some time ago and that Kurashi's wife since has been devastated and refuses to realize the fact that the child is gone. Kurashi now takes comfort with Aimi who wants him to sleep with Aki. Said and done, Kurashi manages to seduce Aki and a triangular drama is at hand. Kurashi seems to get more interested in Aki when Aimi tells him that she's pregnant. Do you follow? Things are a bit more complicated though. It also seems that the child that Aki has seen in the cinema is the ghost of her once aborted child, which she calls Hideki. The ghost of the child also appears in the background of the reportings Aimi does for TV from the murder scenes in Tokyo. Kurashi's child Hideki also seems to come back to its parents and bares a striking resemblence to the ghost of Aki's child. And how is these three persons linked to the gruesome murders? And who is Hideki? As with several others Japanese horror movies, Evil Dead Trap 2 takes its risks and chances and is not easy to follow. Whereas the first film was more straight forward in its plot, Evil Dead Trap 2 is far more complicated. Or, that will say, maybe it's complicated to us westerners who don't have the necessary keys to Japanese culture and storytelling. On the production side of things the film is well written and well conceived. The photography is beautiful at times, especially in the more violent scenes. It has a lot in common with the old Giallo movies. This also applies to the music and the use of shiny sharp instruments when the film turns violent. But what's holding the film up, even though its plot is hard to get a firm grasp of, is the cast and foremost Youko Nakagima as Aki. She manages to portray the sad and tragic figure with heart and credibility. Not as ultra-violent as the first film or as imaginative, Evil Dead Trap 2 has more to tell than you might expect from the first viewing. But, don't let that scare you off, if you're a fan of Japanese horrorfilm you'll definitive not be disappointed.</div></div>
+</body>
+</html>

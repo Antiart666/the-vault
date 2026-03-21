@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+:root {
+  --bg-color: #0d1117;
+  --paper-base: #e2dac7; 
+  --paper-stain: #d4ccb8; 
+  --accent: #f85149;
+  --text-dark: #2a2a2a;
+  --text-bright: #ffffff;
+  --border: #444c56;
+}
+
+body {
+  margin: 0; padding: 0; 
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  background-image: url('background.jpg');
+  background-attachment: fixed; 
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 800px) {
+  .nav-container { flex-direction: column; height: auto !important; padding: 15px !important; }
+  .vault-logo { position: static !important; max-width: 150px !important; margin-bottom: 10px; }
+  .nav-links { gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+  .reading-room { margin: 20px auto !important; width: 95% !important; padding: 40px 20px !important; border-radius: 15px !important; }
+  .main-nav { height: auto !important; }
+  h1 { font-size: 1.8rem !important; }
+}
+
+.main-nav { 
+    background: rgba(13, 17, 23, 0.9); 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 1000; height: 110px;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 30px; height: 100%; }
+.vault-logo { max-width: 210px; position: absolute; top: 15px; left: 0; filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); cursor: pointer; transition: transform 0.3s ease; z-index: 1001; }
+
+.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+.nav-links a { color: var(--text-bright); text-decoration: none; font-size: 0.9rem; text-transform: lowercase; }
+
+.reading-room { 
+    background-color: var(--paper-base);
+    background-image: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(0,0,0,0.04) 0%, transparent 50%), linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.05) 5%, transparent 15%);
+    color: var(--text-dark); 
+    max-width: 700px; margin: 60px 8% 80px auto; padding: 80px 70px; font-family: 'Lora', serif; border-radius: 8px 45px 35px 15px / 20px 15px 40px 10px; box-shadow: 30px 30px 70px rgba(0,0,0,0.7); position: relative; border: 1px solid rgba(0,0,0,0.1);
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #111; margin-bottom: 35px; text-align: center; font-style: italic; font-weight: 600; }
+.content { font-size: 1.05rem; line-height: 1.7; text-align: justify; }
+
+.archive-layout { display: flex; flex-direction: column; max-width: 1400px; margin: 60px auto; gap: 40px; padding: 0 30px; }
+.archive-card { background: var(--paper-base); padding: 30px; border-radius: 10px; margin-bottom: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.4); }
+#searchInput { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 30px; }
+</style>
+</style>
+</head>
+<body class="content-page">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-wrapper"><img src="logo.png" onclick="goToRandom()" class="vault-logo"></div>
+            <ul class="nav-links">
+                <li><a href="index.html">hem</a></li>
+                <li><a href="arkiv.html">sök</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="reading-room"><h1>Sleepy Hollow</h1><div class="content">Titel: Sleepy Hollow<br>The horrorfilm is back at the cinemas. Over the last years films like The Haunting, and The Blair Witch Project have scared moviegoers around the world, and now has one of the few auteurs in Hollywood released his last masterpiece, Sleepy Hollow. Tim Burton is a strange director, who even in the hands of the producers, as with the Batman movies, still manages to get his vision out. He has a certain trademark in the mise-en-scene that gets the viewers' attention at once, just look at Beetlejuice or Batman Returns and you know what I mean. But Sleepy Hollow is by far the most mystical and beautiful film Burton has made to this day. It's the film he was made to make. A horrorfilm that goes back to the roots, and enchants the viewer from the very first frame of the film. In the little village Sleepy Hollow something is lurking in the western woods. It appears like a headless ghost is visiting Sleepy Hollow at night and is decapitating the residents for no apparent reason. But it is a ghost and no one dares to catch him and the heads are never found. From New York young police Ichabod Crane is sent to solve the case with modern techniques. The latest of 1799 that will say. But, what he finds in Sleepy Hollow is far beyond his worst nightmares. Washington Irving wrote the legend of Sleepy Hollow over two hundred years ago, and it has been made for the silver screen before. And it's no wonder; it's a classical story involving ghosts, conspiracy theories and a cute love story. In other words a perfect tale to scare your kids before they go to sleep. But Tim Burton has taken it a step further and the decapitations appear as frequent as Freddy Kruger tells bad one-liners. The acting in the film is inspired, and Johnny Depp overacts in a beautiful manner, Cristina Ricci is cute and Jeffrey Jones is as good as ever. Small cameos from Christopher Lee and, Burton trustee, Michael Gough, both known faces from the Hammer films of the sixties and seventies, makes Sleepy Hollow a homage to old horrorfilms and their stars. Which the set designs also does. The town of Sleepy Hollow and it's surroundings look like illustrations from some old horrorbook and it's no wonder the film got an Oscar nomination for it. It's creepy and beautiful at the same time and without hesitation has Tim Burton managed to present the stuff nightmares are made of. A horrorfilm for ages seven to hundred worth seeing more than one time.</div></div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+:root {
+  --bg-color: #0d1117;
+  --paper-base: #e2dac7; 
+  --paper-stain: #d4ccb8; 
+  --accent: #f85149;
+  --text-dark: #2a2a2a;
+  --text-bright: #ffffff;
+  --border: #444c56;
+}
+
+body {
+  margin: 0; padding: 0; 
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  background-image: url('background.jpg');
+  background-attachment: fixed; 
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 800px) {
+  .nav-container { flex-direction: column; height: auto !important; padding: 15px !important; }
+  .vault-logo { position: static !important; max-width: 150px !important; margin-bottom: 10px; }
+  .nav-links { gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+  .reading-room { margin: 20px auto !important; width: 95% !important; padding: 40px 20px !important; border-radius: 15px !important; }
+  .main-nav { height: auto !important; }
+  h1 { font-size: 1.8rem !important; }
+}
+
+.main-nav { 
+    background: rgba(13, 17, 23, 0.9); 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 1000; height: 110px;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 30px; height: 100%; }
+.vault-logo { max-width: 210px; position: absolute; top: 15px; left: 0; filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); cursor: pointer; transition: transform 0.3s ease; z-index: 1001; }
+
+.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+.nav-links a { color: var(--text-bright); text-decoration: none; font-size: 0.9rem; text-transform: lowercase; }
+
+.reading-room { 
+    background-color: var(--paper-base);
+    background-image: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(0,0,0,0.04) 0%, transparent 50%), linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.05) 5%, transparent 15%);
+    color: var(--text-dark); 
+    max-width: 700px; margin: 60px 8% 80px auto; padding: 80px 70px; font-family: 'Lora', serif; border-radius: 8px 45px 35px 15px / 20px 15px 40px 10px; box-shadow: 30px 30px 70px rgba(0,0,0,0.7); position: relative; border: 1px solid rgba(0,0,0,0.1);
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #111; margin-bottom: 35px; text-align: center; font-style: italic; font-weight: 600; }
+.content { font-size: 1.05rem; line-height: 1.7; text-align: justify; }
+
+.archive-layout { display: flex; flex-direction: column; max-width: 1400px; margin: 60px auto; gap: 40px; padding: 0 30px; }
+.archive-card { background: var(--paper-base); padding: 30px; border-radius: 10px; margin-bottom: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.4); }
+#searchInput { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 30px; }
+</style>
+</style>
+</head>
+<body class="content-page">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-wrapper"><img src="logo.png" onclick="goToRandom()" class="vault-logo"></div>
+            <ul class="nav-links">
+                <li><a href="index.html">hem</a></li>
+                <li><a href="arkiv.html">sök</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="reading-room"><h1>The House On Haunted Hill</h1><div class="content">Titel: The House On Haunted Hill<br>The seemingly endless flood of horror films continue. The corpses in Sleepy Hollow aren't even cold and the annoying screams continue in Scream 3 and more bloody teeny weenies die in Final Destination and if that's not enough here's another movie that's out to destroy our beauty sleep. As always when the inspiration runs dry (the little that actually exists in contemporary Hollywood cinema) the producers look into the archives, desperately seeking to update some old film to present to a new audience. This time around the luck (?) has come to old geezer William Castles classic House on Haunted Hill from 1959. This is the film where Castle had a moving skeleton rigged in the cinemas that was set to scare the hell out of the audience in its time. Today a gimmick like that would cost too much to realize, so what does the remake has to offer? Well, to start with, it's not that bad at all. Or, it's not all that bad. The story is nothing particular. Five persons are offered a million bucks to stay over night at an old asylum, that is... if they survive. The host of the party Steven Price is a thrill-seeking millionaire with a very bored wife Evelyn who thinks that parties like this livens up the mood. Soon it becomes appearent that the gimmicks that Price brought with him are nothing compared to the thing the house has in store for the unfortunate guests. From the opening titles to the end of the film there are no surprises, it's done by the book, by the numbers. But nevertheless William Malone (Scared to Death) manages to pull the film through. Sure, the ending comes all too sudden and leaves a foul taste but there is moments in the film that are really good. Geoffrey Rush seems to have a great time in his role, doing his Vincent Price to the extreme. Famke Janssen is soon to be a new Katarina MacColl in America if she continues to do these small horrorfilm (remember Deep Rising?) and a film that has Jeffrey Combs as a crazed doctor called Dr. Wannacutt is to be hailed. Sure, the film lacks in several ways. The little blood, stupid Marilyn Manson music, too many flat characters that are only in the film to die in horrible ways and a too obvious ending do make me feeling ambivalent toward the film. But what the hell, the sound effects should be nominated for a Academy Award, the set pieces are stunning and some scenes are quite chilling which makes the film worth watching. And the verdict? Well, if you're tired of whatnot by Wes Craven and already has seen Sleepy Hollow and thought that The Haunting was a bit too lame, see The House in Haunted Hill. There are many worse ways to waste 90 minutes of your precious life.</div></div>
+</body>
+</html>

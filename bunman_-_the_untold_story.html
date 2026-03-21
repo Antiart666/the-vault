@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400&family=Lora:ital,wght@0,400;0,500;1,400&family=Playfair+Display:ital,wght@1,600&display=swap');
+
+:root {
+  --bg-color: #0d1117;
+  --paper-base: #e2dac7; 
+  --paper-stain: #d4ccb8; 
+  --accent: #f85149;
+  --text-dark: #2a2a2a;
+  --text-bright: #ffffff;
+  --border: #444c56;
+}
+
+body {
+  margin: 0; padding: 0; 
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  background-color: var(--bg-color);
+  background-image: url('background.jpg');
+  background-attachment: fixed; 
+  background-size: cover;
+  background-position: center;
+}
+
+@media (max-width: 800px) {
+  .nav-container { flex-direction: column; height: auto !important; padding: 15px !important; }
+  .vault-logo { position: static !important; max-width: 150px !important; margin-bottom: 10px; }
+  .nav-links { gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+  .reading-room { margin: 20px auto !important; width: 95% !important; padding: 40px 20px !important; border-radius: 15px !important; }
+  .main-nav { height: auto !important; }
+  h1 { font-size: 1.8rem !important; }
+}
+
+.main-nav { 
+    background: rgba(13, 17, 23, 0.9); 
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 1000; height: 110px;
+}
+.nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; padding: 0 30px; height: 100%; }
+.vault-logo { max-width: 210px; position: absolute; top: 15px; left: 0; filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5)); cursor: pointer; transition: transform 0.3s ease; z-index: 1001; }
+
+.nav-links { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+.nav-links a { color: var(--text-bright); text-decoration: none; font-size: 0.9rem; text-transform: lowercase; }
+
+.reading-room { 
+    background-color: var(--paper-base);
+    background-image: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.1) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(0,0,0,0.04) 0%, transparent 50%), linear-gradient(to right, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.05) 5%, transparent 15%);
+    color: var(--text-dark); 
+    max-width: 700px; margin: 60px 8% 80px auto; padding: 80px 70px; font-family: 'Lora', serif; border-radius: 8px 45px 35px 15px / 20px 15px 40px 10px; box-shadow: 30px 30px 70px rgba(0,0,0,0.7); position: relative; border: 1px solid rgba(0,0,0,0.1);
+}
+
+h1 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #111; margin-bottom: 35px; text-align: center; font-style: italic; font-weight: 600; }
+.content { font-size: 1.05rem; line-height: 1.7; text-align: justify; }
+
+.archive-layout { display: flex; flex-direction: column; max-width: 1400px; margin: 60px auto; gap: 40px; padding: 0 30px; }
+.archive-card { background: var(--paper-base); padding: 30px; border-radius: 10px; margin-bottom: 20px; box-shadow: 10px 10px 30px rgba(0,0,0,0.4); }
+#searchInput { width: 100%; padding: 15px; background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); border-radius: 30px; }
+</style>
+</style>
+</head>
+<body class="content-page">
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="logo-wrapper"><img src="logo.png" onclick="goToRandom()" class="vault-logo"></div>
+            <ul class="nav-links">
+                <li><a href="index.html">hem</a></li>
+                <li><a href="arkiv.html">sök</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="reading-room"><h1>Bunman - the Untold Story</h1><div class="content">Titel: Bunman - the Untold Story <br>This is not a film for the easily offended. Based on a real life murder case, director Danny Lee has the very bad taste to mix slap stick comedy with graphic violence. His intentions may very well have been to make the film a bit more accessible since the true story is a grim one, but it doesn't work. In Macau, close to Hong Kong, a restaurant owner and his whole family gets slaughtered by one of the employees. The cook then serves the family in the restaurant as filling in buns, hence the title, Bunman. The slightly disturbed cook takes over the restaurant, but after a while the police comes sniffing down his back. After numerous not funny comedy routines with the cops, he's finally arrested. Bunman is thrown into a prison, where the police officers, which I thought was the 'good' guys, tortures(!?) him in order to get an confession; they inject water under his skin and beats the living daylights out of him amongst other things. This is a sick, sick movie and I wonder what the hell Lee was thinking about when he wrote it. I don't mind graphic violence and sometimes I really want to see a funny movie. But when dealing with a serious story like this, comedy is way out of line. The scenes revolving murder and mayhem is very authentic and well directed. It seems like Lee are a bit like Italian giallo directors, like Argento and Bava, who are at their very best while directing murder scenes. Not that Lee are as good director as they are, but those scenes are the only ones that kicks ass, the rest of the film feels very uninspired. Much of the films credits must go to Anthony (Hardboiled, Full Contact) Wong who's brilliant as the cook gone nuts. To give this picture a rating is difficult since it's like giving it to two altogether different movies. The comic one involving the police and their work is lousy. Danny Lee has casted himself in the role of chief of police, but without no reason at all, he's surrounded by good-looking hookers all of the time. The other policemen and women are just fooling around trying desperately to be funny and fails. The 'other' film about the Bunman are working on all levels and do not take any prisoners. We are shown everything in graphic detail, and as I said, it's not for the faint hearted. The scene with the family slaughter is very grim and nauseating and is up there on top with the 'viet-cong' scene in Bullet in the Head. Bunman is in a way already a classic, I know that, but without the 'Keystone Cops-scenes' it would been a much better movie. Danny Lee has continued to make films about real-life psychos and did Doctor Lamb with Simon (Naked Killer) Yam. Once again mixing lousy humour with graphic violence. Some people do never learn.</div></div>
+</body>
+</html>
