@@ -7,9 +7,10 @@ import requests
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FILE_NAME = 'Filmlista - Blad1.csv'
 FULL_PATH = os.path.join(CURRENT_DIR, FILE_NAME)
+# Vi använder 'library' som huvudmapp för allt arkivmaterial
 LIBRARY_DIR = os.path.join(CURRENT_DIR, 'library')
 
-# Skapa library-mappen om den inte finns (för säkerhets skull)
+# Skapa mappar om de saknas
 if not os.path.exists(LIBRARY_DIR):
     os.makedirs(LIBRARY_DIR)
 
@@ -27,7 +28,7 @@ st.markdown("""
     h1 { color: #e50914 !important; }
     .movie-card { background-color: #1e2129; padding: 20px; border-radius: 10px; border-left: 5px solid #e50914; }
     .stSelectbox label { color: #e50914 !important; font-weight: bold; }
-    .library-box { background-color: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; margin-top: 20px; }
+    .library-box { background-color: #161b22; padding: 20px; border-radius: 10px; border: 1px solid #30363d; margin-top: 20px; white-space: pre-wrap; font-family: sans-serif; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -52,7 +53,7 @@ if os.path.exists(FULL_PATH):
             
             col1, col2 = st.columns([1, 2])
             with col1:
-                st.info("Poster-service aktiv") # Här kan din poster-funktion ligga
+                st.info("Poster-service aktiv")
             with col2:
                 st.markdown(f"""
                     <div class="movie-card">
@@ -64,34 +65,50 @@ if os.path.exists(FULL_PATH):
                     </div>
                 """, unsafe_allow_html=True)
 
-# --- 5. DET NYA BIBLIOTEKET (AUTOMATISK SKANNING) ---
+# --- 5. DET NYA BIBLIOTEKET (AUTOMATISK SKANNING AV UNDERMAPPAR) ---
 st.write("---")
-st.header("📖 ARKIVET: RECENSIONER & ARTIKLAR")
-st.write("Här hittar du inskannat material från Violent Vision och andra källor.")
+st.header("📖 ARKIVET")
+st.write("Välj kategori och dokument nedan.")
 
-# Lista alla filer i library-mappen
 if os.path.exists(LIBRARY_DIR):
-    archive_files = [f for f in os.listdir(LIBRARY_DIR) if f.endswith(('.html', '.txt', '.md'))]
+    # Denna del letar nu i ALLA mappar inuti library
+    all_files = []
+    for root, dirs, files in os.walk(LIBRARY_DIR):
+        for file in files:
+            if file.endswith(('.html', '.txt', '.md')):
+                # Skapar en snygg sökväg (t.ex. 'interviews/bruce-campbell.txt')
+                rel_path = os.path.relpath(os.path.join(root, file), LIBRARY_DIR)
+                all_files.append(rel_path)
     
-    if archive_files:
-        # Skapa en snygg lista med filnamn (rensad från filändelser för utseendet)
-        display_names = {f: f.replace('.html', '').replace('.txt', '').replace('-', ' ').title() for f in archive_files}
+    if all_files:
+        all_files.sort() # Sorterar så att mappar kommer i ordning
         
-        selected_file = st.selectbox("Välj ett dokument att läsa ur arkivet:", 
-                                     options=archive_files, 
-                                     format_func=lambda x: display_names[x])
+        # Funktion för att göra filnamnen snygga i listan
+        def format_file_names(path):
+            clean_name = path.replace('.txt', '').replace('.html', '').replace('.md', '')
+            clean_name = clean_name.replace('\\', ' / ').replace('/', ' / ') # Fixar snedstreck
+            return clean_name.replace('-', ' ').title()
+
+        selected_file = st.selectbox("Välj ett dokument ur arkivet:", 
+                                     options=all_files, 
+                                     format_func=format_file_names)
         
         if selected_file:
-            with open(os.path.join(LIBRARY_DIR, selected_file), "r", encoding="utf-8") as f:
-                content = f.read()
-                
-            st.markdown('<div class="library-box">', unsafe_allow_html=True)
-            if selected_file.endswith(".html"):
-                st.markdown(content, unsafe_allow_html=True)
-            else:
-                st.text(content)
-            st.markdown('</div>', unsafe_allow_html=True)
+            file_path = os.path.join(LIBRARY_DIR, selected_file)
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    
+                st.markdown('<div class="library-box">', unsafe_allow_html=True)
+                if selected_file.endswith(".html"):
+                    st.markdown(content, unsafe_allow_html=True)
+                else:
+                    # För .txt-filer bevarar vi radbrytningar snyggt
+                    st.markdown(content)
+                st.markdown('</div>', unsafe_allow_html=True)
+            except Exception as e:
+                st.error(f"Kunde inte läsa filen: {e}")
     else:
-        st.write("Arkivet är tomt för tillfället. Ladda upp filer till mappen '/library' för att se dem här.")
+        st.write("Arkivet är tomt. Lägg till mappar och .txt-filer i '/library' för att se dem här.")
 else:
-    st.error("Mappen 'library' saknas i projektet.")
+    st.error("Mappen 'library' saknas.")
