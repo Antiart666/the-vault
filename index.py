@@ -3,13 +3,12 @@ import pandas as pd
 import os
 
 # --- 1. KONFIGURATION OCH SÖKVÄG ---
-# Vi använder absoluta sökvägar för att vara säkra på att servern hittar rätt
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FILE_NAME = 'Filmlista - Blad1.csv'
 FULL_PATH = os.path.join(CURRENT_DIR, FILE_NAME)
 LIBRARY_DIR = os.path.join(CURRENT_DIR, 'library')
 
-# Skapa mappar om de saknas (för säkerhets skull)
+# Skapa mappar om de saknas
 if not os.path.exists(LIBRARY_DIR):
     os.makedirs(LIBRARY_DIR)
 
@@ -57,25 +56,18 @@ if os.path.exists(FULL_PATH):
 st.write("---")
 st.header("📖 ARKIVET")
 
+all_files = []
 if os.path.exists(LIBRARY_DIR):
-    all_files = []
-    # os.walk går igenom library OCH alla undermappar (interviews, articles etc.)
     for root, dirs, files in os.walk(LIBRARY_DIR):
         for file in files:
-            # Vi kollar efter vanliga filändelser
             if file.lower().endswith(('.html', '.txt', '.md')):
-                # Skapa en relativ sökväg från library-mappen
                 rel_path = os.path.relpath(os.path.join(root, file), LIBRARY_DIR)
                 all_files.append(rel_path)
-    
-    # FELSÖKNING: Skriver ut hur många filer som hittades på servern
-    st.write(f"DEBUG: Hittade {len(all_files)} filer i mappen 'library'.")
     
     if all_files:
         all_files.sort()
         
         def format_file_names(path):
-            # Gör namnet snyggt i listan (tar bort filändelse och fixar snedstreck)
             clean_name = path.replace('.txt', '').replace('.TXT', '').replace('.html', '').replace('.md', '')
             clean_name = clean_name.replace('\\', ' / ').replace('/', ' / ')
             return clean_name.replace('-', ' ').title()
@@ -87,20 +79,17 @@ if os.path.exists(LIBRARY_DIR):
         if selected_file:
             file_path = os.path.join(LIBRARY_DIR, selected_file)
             try:
-                # Vi försöker läsa filen med UTF-8 för att klara ÅÄÖ
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                
                 st.markdown('<div class="library-box">', unsafe_allow_html=True)
                 if selected_file.lower().endswith(".html"):
                     st.markdown(content, unsafe_allow_html=True)
                 else:
-                    # För textfiler visar vi innehållet som ren text
                     st.text(content)
                 st.markdown('</div>', unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"Kunde inte läsa filen: {e}")
     else:
-        st.write("Arkivet är tomt. Lägg till filer i mappen 'library' på GitHub.")
+        st.write("Arkivet är tomt. Lägg till mappar och filer i 'library' på GitHub.")
 else:
-    st.error(f"Mappen 'library' hittades inte på sökvägen: {LIBRARY_DIR}")
+    st.error("Mappen 'library' hittades inte.")
