@@ -56,6 +56,10 @@ if os.path.exists(FULL_PATH):
 st.write("---")
 st.header("📖 ARKIVET")
 
+<<<<<<< HEAD
+=======
+# Dubbelkolla mappen
+>>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
 all_files = []
 if os.path.exists(LIBRARY_DIR):
     for root, dirs, files in os.walk(LIBRARY_DIR):
@@ -64,6 +68,12 @@ if os.path.exists(LIBRARY_DIR):
                 rel_path = os.path.relpath(os.path.join(root, file), LIBRARY_DIR)
                 all_files.append(rel_path)
     
+<<<<<<< HEAD
+=======
+    # HÄR ÄR RADEN DU SKA LETA EFTER PÅ HEMSIDAN:
+    st.write(f"DEBUG: Hittade {len(all_files)} filer i mappen 'library'.")
+    
+>>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
     if all_files:
         all_files.sort()
         
@@ -72,9 +82,7 @@ if os.path.exists(LIBRARY_DIR):
             clean_name = clean_name.replace('\\', ' / ').replace('/', ' / ')
             return clean_name.replace('-', ' ').title()
 
-        selected_file = st.selectbox("Välj ett dokument ur arkivet:", 
-                                     options=all_files, 
-                                     format_func=format_file_names)
+        selected_file = st.selectbox("Välj ett dokument ur arkivet:", options=all_files, format_func=format_file_names)
         
         if selected_file:
             file_path = os.path.join(LIBRARY_DIR, selected_file)
@@ -90,6 +98,17 @@ if os.path.exists(LIBRARY_DIR):
             except Exception as e:
                 st.error(f"Kunde inte läsa filen: {e}")
     else:
+<<<<<<< HEAD
         st.write("Arkivet är tomt. Lägg till mappar och filer i 'library' på GitHub.")
 else:
     st.error("Mappen 'library' hittades inte.")
+=======
+        # Om inga filer hittas, visa vad som faktiskt finns i mappen
+        st.warning(f"Mappen 'library' hittades, men den verkar tom på servern.")
+        try:
+            st.write("Innehåll i library-mappen just nu:", os.listdir(LIBRARY_DIR))
+        except:
+            pass
+else:
+    st.error("Mappen 'library' saknas helt på servern.")
+>>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
