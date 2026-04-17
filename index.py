@@ -159,4 +159,4 @@ load_and_display_library()
 
 # --- 6. FOOTER ---
 st.markdown("<hr>", unsafe_allow_html=True)
-st.caption("© 2026 The Vault of Antichrister | Hanterat via Streamlit & GitHub")
+st.caption("© 2026 The Vault of Antichrister | Hanterat via Streamlit & GitHub") 
