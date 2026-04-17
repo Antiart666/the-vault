@@ -1,34 +1,33 @@
 import streamlit as st
 import os
 
-# Din perfekta titel
+# 1. Din snygga titel
 st.title("🎬 THE VAULT OF ANTICHRISTER")
 
-# Vi definierar den exakta stigen som du ser på GitHub
-# Vi kollar både med och utan "the-vault" i början för att vara helt säkra
-path1 = "the-vault/library/interviews"
-path2 = "library/interviews"
+# 2. Leta upp mappen 'interviews' var den än befinner sig
+def hitta_intervju_mapp():
+    # Vi letar i hela projektet efter en mapp som heter 'interviews'
+    for root, dirs, files in os.walk("."):
+        if "interviews" in dirs:
+            return os.path.join(root, "interviews")
+    return None
 
-folder_path = None
-if os.path.exists(path1):
-    folder_path = path1
-elif os.path.exists(path2):
-    folder_path = path2
+intervju_sokvag = hitta_intervju_mapp()
 
-if folder_path:
-    # Vi hämtar alla .txt-filer
-    files = [f for f in os.listdir(folder_path) if f.lower().endswith(".txt")]
+# 3. Om vi hittade mappen, visa din rullista
+if intervju_sokvag:
+    alla_filer = [f for f in os.listdir(intervju_sokvag) if f.lower().endswith(".txt")]
     
-    if files:
-        # Din rullista - nu med rätt namn och rätt filer!
-        selected = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(files))
+    if alla_filer:
+        # HÄR ÄR DIN RULLISTA
+        val = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(alla_filer))
         
-        if selected != "-- Välj en intervju --":
-            with open(os.path.join(folder_path, selected), "r", encoding="utf-8") as f:
-                st.info(f.read())
+        if val != "-- Välj en intervju --":
+            with open(os.path.join(intervju_sokvag, val), "r", encoding="utf-8") as f:
+                st.info(f.read()) # Visar texten snyggt
     else:
-        st.write("Mappen hittades, men den verkar vara tom på .txt-filer.")
+        st.warning("Hittade mappen 'interviews', men den var tom på .txt-filer.")
 else:
-    # Om mappen fortfarande inte hittas visar vi vad servern faktiskt ser
-    st.error("Hittar inte mappen 'library/interviews'.")
-    st.write("Filer på servern just nu:", os.listdir("."))
+    # Denna rad hjälper oss att se vad som är fel utan att förstöra sidan
+    st.error("Kunde inte hitta mappen 'interviews'.")
+    st.write("Detta är vad servern ser just nu:", os.listdir("."))
