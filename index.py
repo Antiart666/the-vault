@@ -1,29 +1,34 @@
 import streamlit as st
 import os
 
+# Din perfekta titel
 st.title("🎬 THE VAULT OF ANTICHRISTER")
 
-# DAMMSUGAREN: Letar efter alla .txt-filer i hela projektet
-all_txt_files = {}
+# Vi definierar den exakta stigen som du ser på GitHub
+# Vi kollar både med och utan "the-vault" i början för att vara helt säkra
+path1 = "the-vault/library/interviews"
+path2 = "library/interviews"
 
-for root, dirs, files in os.walk("."):
-    for file in files:
-        if file.lower().endswith(".txt") and file.lower() != "requirements.txt":
-            # Vi sparar filens namn och dess exakta gömställe
-            full_path = os.path.join(root, file)
-            all_txt_files[file] = full_path
+folder_path = None
+if os.path.exists(path1):
+    folder_path = path1
+elif os.path.exists(path2):
+    folder_path = path2
 
-# OM VI HITTADE FILER
-if all_txt_files:
-    # Din rullista - exakt som du vill ha den
-    lista = sorted(list(all_txt_files.keys()))
-    selected = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + lista)
+if folder_path:
+    # Vi hämtar alla .txt-filer
+    files = [f for f in os.listdir(folder_path) if f.lower().endswith(".txt")]
     
-    if selected != "-- Välj en intervju --":
-        path_to_open = all_txt_files[selected]
-        with open(path_to_open, "r", encoding="utf-8") as f:
-            st.info(f.read())
+    if files:
+        # Din rullista - nu med rätt namn och rätt filer!
+        selected = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(files))
+        
+        if selected != "-- Välj en intervju --":
+            with open(os.path.join(folder_path, selected), "r", encoding="utf-8") as f:
+                st.info(f.read())
+    else:
+        st.write("Mappen hittades, men den verkar vara tom på .txt-filer.")
 else:
-    # Om listan fortfarande är tom
-    st.error("Systemet hittar inga .txt-filer alls på servern.")
-    st.write("Dessa filer ser jag just nu:", os.listdir("."))
+    # Om mappen fortfarande inte hittas visar vi vad servern faktiskt ser
+    st.error("Hittar inte mappen 'library/interviews'.")
+    st.write("Filer på servern just nu:", os.listdir("."))
