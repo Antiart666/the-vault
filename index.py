@@ -25,7 +25,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- 3. HUVUDINNEHÅLL (DATABASEN) ---
+# --- 3. HUVUDINNEHÅLL (FILMDATABASEN) ---
 if os.path.exists(FULL_PATH):
     try:
         df = pd.read_csv(FULL_PATH)
@@ -36,6 +36,7 @@ if os.path.exists(FULL_PATH):
             df = df[df.apply(lambda row: search_query.lower() in row.astype(str).str.lower().values, axis=1)]
 
         if not df.empty:
+            # Rullista för filmerna
             selected_title = st.selectbox("Välj en film för detaljer:", ["-- Välj film --"] + df['Titel'].tolist())
             if selected_title != "-- Välj film --":
                 m = df[df['Titel'] == selected_title].iloc[0]
@@ -52,37 +53,33 @@ if os.path.exists(FULL_PATH):
     except Exception as e:
         st.error(f"Kunde inte ladda filmlistan: {e}")
 
-# --- 4. DET NYA BIBLIOTEKET ---
+# --- 4. ARKIVET (INTERVJUER M.M.) ---
 st.write("---")
+# Här ligger rullistan för dina texter (Intervjuer etc.)
 st.header("📖 ARKIVET")
 
-<<<<<<< HEAD
-=======
-# Dubbelkolla mappen
->>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
 all_files = []
 if os.path.exists(LIBRARY_DIR):
     for root, dirs, files in os.walk(LIBRARY_DIR):
         for file in files:
             if file.lower().endswith(('.html', '.txt', '.md')):
+                # Denna rad gör att "interviews" blir en del av namnet
                 rel_path = os.path.relpath(os.path.join(root, file), LIBRARY_DIR)
                 all_files.append(rel_path)
     
-<<<<<<< HEAD
-=======
-    # HÄR ÄR RADEN DU SKA LETA EFTER PÅ HEMSIDAN:
-    st.write(f"DEBUG: Hittade {len(all_files)} filer i mappen 'library'.")
-    
->>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
     if all_files:
         all_files.sort()
         
         def format_file_names(path):
-            clean_name = path.replace('.txt', '').replace('.TXT', '').replace('.html', '').replace('.md', '')
+            # Denna funktion snyggar till "interviews/bruce.txt" till "Interviews / Bruce..."
+            clean_name = path.replace('.txt', '').replace('.html', '').replace('.md', '')
             clean_name = clean_name.replace('\\', ' / ').replace('/', ' / ')
             return clean_name.replace('-', ' ').title()
 
-        selected_file = st.selectbox("Välj ett dokument ur arkivet:", options=all_files, format_func=format_file_names)
+        # HÄR ÄR DIN RULLISTA FÖR INTERVJUERNA
+        selected_file = st.selectbox("Välj ett dokument ur arkivet (Intervjuer m.m.):", 
+                                     options=all_files, 
+                                     format_func=format_file_names)
         
         if selected_file:
             file_path = os.path.join(LIBRARY_DIR, selected_file)
@@ -98,17 +95,4 @@ if os.path.exists(LIBRARY_DIR):
             except Exception as e:
                 st.error(f"Kunde inte läsa filen: {e}")
     else:
-<<<<<<< HEAD
-        st.write("Arkivet är tomt. Lägg till mappar och filer i 'library' på GitHub.")
-else:
-    st.error("Mappen 'library' hittades inte.")
-=======
-        # Om inga filer hittas, visa vad som faktiskt finns i mappen
-        st.warning(f"Mappen 'library' hittades, men den verkar tom på servern.")
-        try:
-            st.write("Innehåll i library-mappen just nu:", os.listdir(LIBRARY_DIR))
-        except:
-            pass
-else:
-    st.error("Mappen 'library' saknas helt på servern.")
->>>>>>> 146435f24f3a3f80375e7bdadfcf886f8956f176
+        st.write("Inga dokument hittades i 'library'.")
