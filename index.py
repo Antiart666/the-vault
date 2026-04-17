@@ -111,4 +111,4 @@ if os.path.exists(LIBRARY_DIR):
     else:
         st.write("Arkivet är tomt. Lägg till mappar och .txt-filer i '/library' för att se dem här.")
 else:
-    st.error("Mappen 'library' saknas.")  
+    st.error("Mappen 'library' saknas.")
