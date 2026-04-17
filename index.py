@@ -1,34 +1,34 @@
 import streamlit as st
 import os
 
-# Titeln som du vill ha den
 st.title("🎬 THE VAULT OF ANTICHRISTER")
 
-# 1. Hitta mappen 'library/interviews' direkt
-# Vi använder en säker sökning som fungerar på Vercel
-base_path = os.path.dirname(os.path.abspath(__file__))
-folder_path = os.path.join(base_path, "library", "interviews")
+# DEN SMARTA SÖKAREN: Letar efter mappen 'interviews' var den än gömmer sig
+def hitta_mappen():
+    for root, dirs, files in os.walk("."):
+        if "interviews" in [d.lower() for d in dirs]:
+            # Hittade mappen! Vi returnerar den exakta sökvägen
+            for d in dirs:
+                if d.lower() == "interviews":
+                    return os.path.join(root, d)
+    return None
 
-# 2. Om mappen finns, skapa rullistan
-if os.path.exists(folder_path):
-    # Vi hämtar alla .txt (och .TXT) filer
+folder_path = hitta_mappen()
+
+if folder_path:
+    # Vi har hittat mappen, nu hämtar vi filerna
     files = [f for f in os.listdir(folder_path) if f.lower().endswith(".txt")]
     
     if files:
-        # HÄR ÄR DIN RULLISTA - Vi döper den exakt till "Intervjuer"
+        # Din rullista - exakt som du vill ha den
         selected = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(files))
         
         if selected != "-- Välj en intervju --":
-            file_path = os.path.join(folder_path, selected)
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
-                # Visar texten snyggt utan att ändra designen
-                st.markdown(f"### {selected[:-4]}") # Visar filnamnet som rubrik
-                st.info(content) 
+            with open(os.path.join(folder_path, selected), "r", encoding="utf-8") as f:
+                st.info(f.read())
     else:
-        st.write("Hittade inga textfiler i mappen 'library/interviews'.")
+        st.warning("Mappen 'interviews' hittades, men den verkar vara tom på .txt-filer.")
 else:
-    # Om mappen inte hittas kollar vi om den ligger i en undermapp
-    st.error("Kunde inte hitta biblioteket. Kontrollera att mappen 'library' ligger bredvid index.py på GitHub.")
-
-# Vi tar bort felsöknings-boxen helt så sidan blir "ren" och perfekt!
+    # Detta visas bara om mappen faktiskt inte finns på GitHub
+    st.error("Kunde inte hitta mappen 'interviews' i projektet.")
+    st.write("Filer som servern ser:", os.listdir("."))
