@@ -56,6 +56,71 @@ def html_till_text(raw_html):
     cleaned = html.unescape(cleaned)
     return cleaned
 
+def hamta_reading_room_block(raw_html):
+    lower = raw_html.lower()
+    marker = '<div class="reading-room"'
+    idx = lower.find(marker)
+    if idx == -1:
+        return raw_html
+    tail = raw_html[idx:]
+    script_match = re.search(r'<script\b', tail, flags=re.IGNORECASE)
+    if script_match:
+        tail = tail[:script_match.start()]
+    return tail
+
+def hamta_html_rader_och_titel(path, fallback_title):
+    source_path = path
+    if os.path.isfile(path) and os.path.getsize(path) == 0 and os.path.isfile(path + ".html"):
+        source_path = path + ".html"
+
+    try:
+        with open(source_path, 'r', encoding='utf-8', errors='ignore') as f:
+            raw = f.read()
+    except Exception:
+        return fallback_title, []
+
+    reading_room = hamta_reading_room_block(raw)
+    h1_match = re.search(r'<h1[^>]*>(.*?)</h1>', reading_room, flags=re.IGNORECASE | re.DOTALL)
+    if h1_match:
+        heading = re.sub(r'<[^>]+>', ' ', h1_match.group(1))
+        parsed_title = html.unescape(heading).strip()
+    else:
+        parsed_title = ''
+
+    text = html_till_text(reading_room)
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return (parsed_title or fallback_title), lines
+
+def parse_category_page_entries(cat):
+    entries = []
+    cat_page = f"cat_{slugify(cat)}"
+    if not os.path.isfile(cat_page):
+        return entries
+
+    with open(cat_page, 'r', encoding='utf-8', errors='ignore') as f:
+        raw = f.read()
+
+    reading_room = hamta_reading_room_block(raw)
+    link_matches = re.findall(r'<a[^>]+href="([^"]+)"[^>]*>(.*?)</a>', reading_room, flags=re.IGNORECASE | re.DOTALL)
+
+    for href, link_text in link_matches:
+        href = href.strip()
+        if not href.lower().endswith('.html'):
+            continue
+        if not os.path.isfile(href):
+            continue
+
+        clean_link_title = html.unescape(re.sub(r'<[^>]+>', ' ', link_text)).strip() or titel_fran_filnamn(href)
+        title, lines = hamta_html_rader_och_titel(href, clean_link_title)
+        if not lines:
+            continue
+
+        content = ["<p>" + stada_text(line) + "</p>" for line in lines]
+        if content:
+            entries.append({'title': title, 'cat': cat, 'content': content})
+
+    return entries
+
 def skapa_entries_fran_rader(lines, cat, fallback_title):
     entries = []
     current = None
@@ -98,9 +163,8 @@ def parse_source_file(path, cat):
             return skapa_entries_fran_rader(lines, cat, fallback_title)
 
         if lower.endswith(('.html', '.htm')):
-            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
-                lines = html_till_text(f.read()).splitlines()
-            return skapa_entries_fran_rader(lines, cat, fallback_title)
+            title, lines = hamta_html_rader_och_titel(path, fallback_title)
+            return skapa_entries_fran_rader(lines, cat, title)
     except Exception:
         return []
 
@@ -216,6 +280,16 @@ def read_filmlista():
 def process_manus():
     data_list = []
     used_slugs = set()
+    seen_by_cat = {cat: set() for cat in CATEGORIES}
+
+    def lagg_till_entry(entry):
+        normalized_title = entry['title'].strip().lower()
+        if normalized_title in seen_by_cat.get(entry['cat'], set()):
+            return
+        entry['fname'] = make_unique_slug(slugify(entry['title']), used_slugs)
+        data_list.append(entry)
+        seen_by_cat.setdefault(entry['cat'], set()).add(normalized_title)
+
     for cat in CATEGORIES:
         source_dirs = [os.path.join(BASE_INPUT, cat)] + EXTRA_CATEGORY_DIRS.get(cat, [])
         for source_dir in source_dirs:
@@ -235,8 +309,12 @@ def process_manus():
                 path = os.path.join(source_dir, file)
                 entries = parse_source_file(path, cat)
                 for entry in entries:
-                    entry['fname'] = make_unique_slug(slugify(entry['title']), used_slugs)
-                    data_list.append(entry)
+                    lagg_till_entry(entry)
+
+        # Fallback behövs just nu för legacy-intervjuer (t.ex. David Hess) som saknar källfil i Manus/interviews.
+        if cat == 'Intervjuer':
+            for entry in parse_category_page_entries(cat):
+                lagg_till_entry(entry)
 
     for i in data_list:
         i['content'] = "".join(i['content'])
