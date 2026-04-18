@@ -1,12 +1,12 @@
 import streamlit as st
 import os
 import streamlit.components.v1 as components
+import docx
 
-# 1. Inställningar för sidan
-st.set_page_config(page_title="The Vault", layout="wide")
+# 1. Titel
 st.title("🎬 THE VAULT OF ANTICHRISTER")
 
-# 2. Hitta mappen (Skottsäker sökning)
+# 2. Hitta mappen (Skottsäker sökning som hittar 'interviews' var den än ligger)
 def hitta_mappen():
     for root, dirs, files in os.walk("."):
         if "interviews" in [d.lower() for d in dirs]:
@@ -17,36 +17,37 @@ def hitta_mappen():
 
 folder_path = hitta_mappen()
 
-# 3. Om mappen finns, skapa rullistan
+# 3. Visa rullistan och filerna
 if folder_path:
-    # Vi hämtar både .txt och .html (viktigt för David Hess!)
-    alla_filer = [f for f in os.listdir(folder_path) if f.lower().endswith((".txt", ".html"))]
+    # Hämtar alla filer du lagt där (.txt, .html, .docx)
+    alla_filer = [f for f in os.listdir(folder_path) if f.lower().endswith((".txt", ".html", ".docx"))]
     
     if alla_filer:
-        # Din rullista - AUTOMATISK (nya filer dyker upp här direkt)
+        # Din befintliga rullista
         val = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(alla_filer))
         
         if val != "-- Välj en intervju --":
             fil_stig = os.path.join(folder_path, val)
+            ext = val.lower()
             
-            # Vi läser filen med extra säkerhet för gamla format
-            with open(fil_stig, "r", encoding="utf-8", errors="ignore") as f:
-                innehall = f.read()
-            
-            # KOLLA FILTYP:
-            if val.lower().endswith(".html"):
-                # Om det är en gammal HTML-fil från Netlify, rendera den som en sida
-                components.html(innehall, height=1000, scrolling=True)
-            else:
-                # Om det är en vanlig textfil, visa den som text
-                st.info(innehall)
+            # LÄS FILEN BASERAT PÅ TYP
+            try:
+                if ext.endswith(".docx"):
+                    doc = docx.Document(fil_stig)
+                    text = "\n".join([para.text for para in doc.paragraphs])
+                    st.info(text)
+                
+                elif ext.endswith(".html"):
+                    with open(fil_stig, "r", encoding="utf-8", errors="ignore") as f:
+                        # Visar din gamla HTML exakt som den är
+                        components.html(f.read(), height=1000, scrolling=True)
+                
+                else: # För .txt filer
+                    with open(fil_stig, "r", encoding="utf-8", errors="ignore") as f:
+                        st.info(f.read())
+            except Exception as e:
+                st.error(f"Kunde inte ladda filen: {e}")
     else:
-        st.write("Mappen hittades men den verkar vara tom.")
+        st.write("Inga filer hittades i mappen 'interviews'.")
 else:
-    st.error("Kunde inte hitta mappen 'interviews' på GitHub.")
-
-# Denna rad är bara för dig, så du ser att koden hittar rätt
-if folder_path:
-    with st.expander("Teknisk info (om något krånglar)"):
-        st.write(f"Sökväg: {folder_path}")
-        st.write(f"Filer som hittades: {alla_filer}")
+    st.error("Hittar inte mappen 'interviews'.")
