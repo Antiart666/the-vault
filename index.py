@@ -10,6 +10,7 @@ SITE_NAME = "the vault of antichrister"
 BASE_INPUT = 'Manus'
 CSV_FILE = 'Filmlista - Blad1.csv'
 PDF_INPUT = 'Pressklipp'
+VAULT_PASSWORD = '46275Thevault'
 CATEGORIES = ['Recensioner', 'Artiklar', 'Uppsats', 'Intervjuer', 'Filmhistoria', 'Information om The Vault']
 ALPHABETICAL_CATEGORIES = {'Recensioner', 'Artiklar', 'Intervjuer', 'Information om The Vault'}
 EXTRA_CATEGORY_DIRS = {
@@ -508,10 +509,8 @@ def write_site():
     all_content_slugs = [d['fname'] for d in site_data] + [p['fname'] for p in pressklipp]
     
     nav_html = '<li class="nav-item"><a href="index.html">hem</a></li><li class="nav-item"><a href="arkiv.html">sök</a></li>'
-    if filmlista: nav_html += '<li class="nav-item"><a href="the_vault.html">the vault</a></li>'
     
     mobile_grid_html = '<a href="index.html" class="mobile-tile">hem</a><a href="arkiv.html" class="mobile-tile">sök arkiv</a>'
-    if filmlista: mobile_grid_html += '<a href="the_vault.html" class="mobile-tile">the vault</a>'
 
     for cat in CATEGORIES + (['Pressklipp'] if pressklipp else []):
         items = [d for d in site_data if d['cat'] == cat] if cat != 'Pressklipp' else pressklipp
@@ -520,6 +519,10 @@ def write_site():
             for item in items: nav_html += f'<a href="{item["fname"]}">{item["title"][:35]}</a>'
             nav_html += '</div></li>'
             mobile_grid_html += f'<a href="cat_{slugify(cat)}" class="mobile-tile">{cat.lower()}</a>'
+
+    if filmlista:
+        nav_html += '<li class="nav-item"><a href="the_vault.html" onclick="return goToVault(event);">the vault</a></li>'
+        mobile_grid_html += '<a href="the_vault.html" onclick="return goToVault(event);" class="mobile-tile">the vault</a>'
 
     master_template = """<!DOCTYPE html><html lang="sv"><head>
     <meta charset="UTF-8">
@@ -537,6 +540,28 @@ def write_site():
     <script>
     function handleLogoClick() { if (window.innerWidth <= 1000) { toggleMenu(); } else { window.location.href = 'index.html'; } }
     function toggleMenu() { const m = document.getElementById('mobileMenuOverlay'); m.style.display = (m.style.display === 'block') ? 'none' : 'block'; document.body.style.overflow = (m.style.display === 'block') ? 'hidden' : 'auto'; }
+    const VAULT_PASSWORD = [[VAULT_PASSWORD_JSON]];
+    const VAULT_ACCESS_KEY = 'the_vault_access';
+
+    function hasVaultAccess() { return sessionStorage.getItem(VAULT_ACCESS_KEY) === '1'; }
+    function requestVaultAccess() {
+        const entered = window.prompt('Lösenord för The Vault:');
+        if (entered === null) return false;
+        if (entered === VAULT_PASSWORD) {
+            sessionStorage.setItem(VAULT_ACCESS_KEY, '1');
+            return true;
+        }
+        window.alert('Fel lösenord.');
+        return false;
+    }
+    function goToVault(event) {
+        if (event) event.preventDefault();
+        if (hasVaultAccess() || requestVaultAccess()) {
+            window.location.href = 'the_vault.html';
+            return true;
+        }
+        return false;
+    }
     
     const filmDb = [[FILM_DB_JSON]];
     function openCard(id) {
@@ -556,6 +581,10 @@ def write_site():
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
     const currentIndex = allPages.indexOf(currentPath);
     window.onload = function() {
+        if (currentPath === 'the_vault.html' && !(hasVaultAccess() || requestVaultAccess())) {
+            window.location.href = 'index.html';
+            return;
+        }
         const p = document.getElementById('prevBtn'); const n = document.getElementById('nextBtn');
         if (currentIndex > 0 && p) { p.href = allPages[currentIndex-1]; p.classList.remove('hidden'); }
         if (currentIndex < allPages.length-1 && currentIndex !== -1 && n) { n.href = allPages[currentIndex+1]; n.classList.remove('hidden'); }
@@ -584,7 +613,7 @@ def write_site():
     </script></body></html>"""
 
     def render(body, show_btns=True):
-        t = master_template.replace("[[SITENAME]]", SITE_NAME).replace("[[CSS]]", CSS_CODE).replace("[[NAV]]", nav_html).replace("[[MOBILE_NAV]]", mobile_grid_html).replace("[[SLUGS]]", json.dumps(all_content_slugs)).replace("[[FILM_DB_JSON]]", json.dumps(filmlista)).replace("[[DB_JSON]]", json.dumps(site_data))
+        t = master_template.replace("[[SITENAME]]", SITE_NAME).replace("[[CSS]]", CSS_CODE).replace("[[NAV]]", nav_html).replace("[[MOBILE_NAV]]", mobile_grid_html).replace("[[SLUGS]]", json.dumps(all_content_slugs)).replace("[[FILM_DB_JSON]]", json.dumps(filmlista)).replace("[[DB_JSON]]", json.dumps(site_data)).replace("[[VAULT_PASSWORD_JSON]]", json.dumps(VAULT_PASSWORD))
         nav_btns = '<div class="page-nav"><a id="prevBtn" class="nav-btn hidden">← föregående</a><a id="nextBtn" class="nav-btn hidden">nästa →</a></div>' if show_btns else ''
         return t.replace("[[BODY]]", body.replace("[[NAV_BTNS]]", nav_btns))
 
