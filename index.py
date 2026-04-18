@@ -10,12 +10,13 @@ SITE_NAME = "the vault of antichrister"
 BASE_INPUT = 'Manus'
 CSV_FILE = 'Filmlista - Blad1.csv'
 PDF_INPUT = 'Pressklipp'
-CATEGORIES = ['Recensioner', 'Artiklar', 'Uppsats', 'Intervjuer', 'Filmhistoria']
-ALPHABETICAL_CATEGORIES = {'Recensioner', 'Artiklar', 'Intervjuer'}
+CATEGORIES = ['Recensioner', 'Artiklar', 'Uppsats', 'Intervjuer', 'Filmhistoria', 'Information om The Vault']
+ALPHABETICAL_CATEGORIES = {'Recensioner', 'Artiklar', 'Intervjuer', 'Information om The Vault'}
 EXTRA_CATEGORY_DIRS = {
     'Recensioner': ['reviews'],
     'Artiklar': ['articles'],
     'Intervjuer': ['interviews'],
+    'Information om The Vault': ['vault_info'],
 }
 
 # --- 2. HJÄLPFUNKTIONER ---
