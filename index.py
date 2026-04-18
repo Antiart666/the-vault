@@ -512,7 +512,12 @@ def write_site():
     
     mobile_grid_html = '<a href="index.html" class="mobile-tile">hem</a><a href="arkiv.html" class="mobile-tile">sök arkiv</a>'
 
-    for cat in CATEGORIES + (['Pressklipp'] if pressklipp else []):
+    nav_categories = [cat for cat in CATEGORIES if cat != 'Information om The Vault']
+    if pressklipp:
+        nav_categories.append('Pressklipp')
+    nav_categories.append('Information om The Vault')
+
+    for cat in nav_categories:
         items = [d for d in site_data if d['cat'] == cat] if cat != 'Pressklipp' else pressklipp
         if items:
             nav_html += f'<li class="nav-item"><a href="#">{cat.lower()} ▼</a><div class="dropdown-content">'
