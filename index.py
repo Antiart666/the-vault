@@ -19,6 +19,30 @@ EXTRA_CATEGORY_DIRS = {
     'Information om The Vault': ['vault_info'],
 }
 
+# Recensioner ursprungligen publicerade på SweGore (matchas på normaliserad titel i gemener)
+SWEGORE_TITLES = {
+    'black christmas',
+    'caged',
+    'dead air',
+    'deep red',
+    'djävla djur. box',
+    'donkey punch',
+    'eden log',
+    'maniac',
+    'phenomena',
+    'rats – nattens terror',
+    'skin in the fifties – the flesh merchant',
+    'skräcken har 1000 ögon',
+    'the abandoned',
+    'the nightmare on elm street collection',
+    'the nightmare on elm street collect',
+    'the sexploiters',
+    'trick or treat',
+    'two evil eyes',
+    'the beyond',
+    'stage fright',
+}
+
 # --- 2. HJÄLPFUNKTIONER ---
 def slugify(text):
     if not text: return "sida.html"
@@ -367,6 +391,12 @@ def process_manus():
             return
         entry['fname'] = make_unique_slug(slugify(raw_title), used_slugs)
         entry['title'] = display_title
+        # Injicera SweGore-not om titeln matchar och ingen publikationsnot redan finns
+        if entry['cat'] == 'Recensioner' and normalized_title in SWEGORE_TITLES:
+            swegore_note = "<p><em>Publicerad på SweGore</em></p>"
+            content = entry['content']
+            if not any('publicerad' in p.lower() for p in content):
+                entry['content'] = [swegore_note] + content
         data_list.append(entry)
         seen_by_cat.setdefault(entry['cat'], set()).add(normalized_title)
 
