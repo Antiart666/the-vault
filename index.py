@@ -91,7 +91,11 @@ def extract_publication_note(text):
 def normalize_title_for_category(cat, text):
     title = normalize_title(text)
     if cat in {'Recensioner', 'Artiklar'}:
-        return clean_review_title(title)
+        cleaned = clean_review_title(title)
+        # Specialfall: Tied by conventions blir förkortad till bara Tied
+        if cleaned == 'Tied' and 'by conventions' in title.lower():
+            return 'Tied by conventions'
+        return cleaned
     if cat == 'Filmhistoria' and title == 'Filmkompendie VT 2001 – av Christer Persson och Anne Hammenroth':
         return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     return title
