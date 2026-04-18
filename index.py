@@ -41,6 +41,13 @@ SWEGORE_TITLES = {
     'two evil eyes',
     'the beyond',
     'stage fright',
+    'district 9',
+    'fascination',
+    'fredagen 13:e del 3',
+    'lucio fulci remembered vol. 1',
+    'lucio fulci remembered vol 1',
+    'scandinavian blue: erotic cinema of sweden and denmark in the 1960s and 1970s',
+    'scandinavian blue: erotic cinema of',
 }
 
 # --- 2. HJÄLPFUNKTIONER ---
