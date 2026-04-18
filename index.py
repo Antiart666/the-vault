@@ -2,50 +2,51 @@ import streamlit as st
 import os
 import streamlit.components.v1 as components
 
-# 1. Inställningar och Titel
+# 1. Inställningar för sidan
 st.set_page_config(page_title="The Vault", layout="wide")
 st.title("🎬 THE VAULT OF ANTICHRISTER")
 
-# 2. Hitta mappen (Vi kollar de två vanligaste ställena)
-possible_paths = ["library/interviews", "the-vault/library/interviews", "."]
-folder_path = None
+# 2. Hitta mappen (Skottsäker sökning)
+def hitta_mappen():
+    for root, dirs, files in os.walk("."):
+        if "interviews" in [d.lower() for d in dirs]:
+            for d in dirs:
+                if d.lower() == "interviews":
+                    return os.path.join(root, d)
+    return None
 
-for p in possible_paths:
-    if os.path.exists(p) and any(f.lower().endswith(('.txt', '.html')) for f in os.listdir(p)):
-        folder_path = p
-        break
+folder_path = hitta_mappen()
 
-# 3. Om vi hittat mappen, hantera listan
+# 3. Om mappen finns, skapa rullistan
 if folder_path:
-    # Vi hämtar ALLA filer som är .txt eller .html
-    filer = [f for f in os.listdir(folder_path) if f.lower().endswith((".txt", ".html"))]
+    # Vi hämtar både .txt och .html (viktigt för David Hess!)
+    alla_filer = [f for f in os.listdir(folder_path) if f.lower().endswith((".txt", ".html"))]
     
-    if filer:
-        # Din rullista (sorterad så David Hess är lätt att hitta)
-        val = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(filer))
+    if alla_filer:
+        # Din rullista - AUTOMATISK (nya filer dyker upp här direkt)
+        val = st.selectbox("Intervjuer", ["-- Välj en intervju --"] + sorted(alla_filer))
         
         if val != "-- Välj en intervju --":
             fil_stig = os.path.join(folder_path, val)
             
-            try:
-                # Vi öppnar filen med 'latin-1' som backup om det är gamla HTML-filer
-                with open(fil_stig, "r", encoding="utf-8", errors="replace") as f:
-                    innehall = f.read().strip()
-                
-                if not innehall:
-                    st.error(f"Filen '{val}' verkar vara helt tom på GitHub.")
-                else:
-                    # Om det är en HTML-fil, visa den som en komponent
-                    if val.lower().endswith(".html"):
-                        components.html(innehall, height=800, scrolling=True)
-                    else:
-                        # Om det är text, visa den snyggt
-                        st.markdown(f"### {val.replace('.txt', '').replace('.html', '')}")
-                        st.info(innehall)
-                        
-            except Exception as e:
-                st.error(f"Kunde inte läsa filen: {e}")
+            # Vi läser filen med extra säkerhet för gamla format
+            with open(fil_stig, "r", encoding="utf-8", errors="ignore") as f:
+                innehall = f.read()
+            
+            # KOLLA FILTYP:
+            if val.lower().endswith(".html"):
+                # Om det är en gammal HTML-fil från Netlify, rendera den som en sida
+                components.html(innehall, height=1000, scrolling=True)
+            else:
+                # Om det är en vanlig textfil, visa den som text
+                st.info(innehall)
     else:
-        st.warning("Inga .txt eller .html-filer hittades i mappen.")
+        st.write("Mappen hittades men den verkar vara tom.")
 else:
-    st.error("Systemet hittar inte din 'interviews'-mapp. Kontrollera strukturen på GitHub.")
+    st.error("Kunde inte hitta mappen 'interviews' på GitHub.")
+
+# Denna rad är bara för dig, så du ser att koden hittar rätt
+if folder_path:
+    with st.expander("Teknisk info (om något krånglar)"):
+        st.write(f"Sökväg: {folder_path}")
+        st.write(f"Filer som hittades: {alla_filer}")
