@@ -133,6 +133,8 @@ def normalize_title_for_category(cat, text):
         return 'John Morghen - From Psychopathic to Ecclesiastic!'
     if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'interview' not in title.lower():
         return 'Jack Stevenson and the Swedish sin!'
+    if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'interview' in title.lower():
+        return 'Jack Stevenson 1999'
     return title
 
 def extrahera_nummer(filename):
