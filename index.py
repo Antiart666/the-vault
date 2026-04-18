@@ -28,13 +28,21 @@ def slugify(text):
 def stada_text(text):
     return re.sub(r'([.,!?;:])([a-zA-ZåäöÅÄÖ])', r'\1 \2', text)
 
+def normalize_title(text):
+    """Konvertera titel till korrekt Title Case format"""
+    if not text:
+        return text
+    # Först konvertera till Title Case
+    normalized = text.strip().title()
+    return normalized
+
 def extrahera_nummer(filename):
     match = re.match(r'(\d+)', filename)
     return int(match.group()) if match else 999
 
 def titel_fran_filnamn(filename):
     base = os.path.splitext(os.path.basename(filename))[0]
-    return re.sub(r'[_-]+', ' ', base).strip().title()
+    return normalize_title(re.sub(r'[_-]+', ' ', base))
 
 def make_unique_slug(base_slug, used_slugs):
     if base_slug not in used_slugs:
@@ -77,19 +85,19 @@ def hamta_html_rader_och_titel(path, fallback_title):
         with open(source_path, 'r', encoding='utf-8', errors='ignore') as f:
             raw = f.read()
     except Exception:
-        return fallback_title, []
+        return normalize_title(fallback_title), []
 
     reading_room = hamta_reading_room_block(raw)
     h1_match = re.search(r'<h1[^>]*>(.*?)</h1>', reading_room, flags=re.IGNORECASE | re.DOTALL)
     if h1_match:
         heading = re.sub(r'<[^>]+>', ' ', h1_match.group(1))
-        parsed_title = html.unescape(heading).strip()
+        parsed_title = normalize_title(html.unescape(heading).strip())
     else:
         parsed_title = ''
 
     text = html_till_text(reading_room)
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    return (parsed_title or fallback_title), lines
+    return (parsed_title or normalize_title(fallback_title)), lines
 
 def parse_category_page_entries(cat):
     entries = []
@@ -110,7 +118,7 @@ def parse_category_page_entries(cat):
         if not os.path.isfile(href):
             continue
 
-        clean_link_title = html.unescape(re.sub(r'<[^>]+>', ' ', link_text)).strip() or titel_fran_filnamn(href)
+        clean_link_title = normalize_title(html.unescape(re.sub(r'<[^>]+>', ' ', link_text)).strip() or titel_fran_filnamn(href))
         title, lines = hamta_html_rader_och_titel(href, clean_link_title)
         if not lines:
             continue
@@ -131,7 +139,7 @@ def skapa_entries_fran_rader(lines, cat, fallback_title):
         if not txt:
             continue
         if txt.lower().startswith('titel:'):
-            title = txt.split(':', 1)[1].strip() or fallback_title
+            title = normalize_title(txt.split(':', 1)[1].strip() or fallback_title)
             current = {'title': title, 'cat': cat, 'content': []}
             entries.append(current)
             has_titel_blocks = True
@@ -144,7 +152,7 @@ def skapa_entries_fran_rader(lines, cat, fallback_title):
 
     content = ["<p>" + stada_text(line.strip()) + "</p>" for line in lines if line.strip()]
     if content:
-        return [{'title': fallback_title, 'cat': cat, 'content': content}]
+        return [{'title': normalize_title(fallback_title), 'cat': cat, 'content': content}]
     return []
 
 def parse_source_file(path, cat):
