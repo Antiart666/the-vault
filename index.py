@@ -2,6 +2,7 @@ import os
 import re
 import json
 import csv
+import html
 from docx import Document
 
 # --- 1. KONFIGURATION ---
@@ -10,6 +11,11 @@ BASE_INPUT = 'Manus'
 CSV_FILE = 'Filmlista - Blad1.csv'
 PDF_INPUT = 'Pressklipp'
 CATEGORIES = ['Recensioner', 'Artiklar', 'Uppsats', 'Intervjuer', 'Filmhistoria']
+EXTRA_CATEGORY_DIRS = {
+    'Recensioner': ['reviews'],
+    'Artiklar': ['articles'],
+    'Intervjuer': ['interviews'],
+}
 
 # --- 2. HJÄLPFUNKTIONER ---
 def slugify(text):
@@ -25,6 +31,80 @@ def stada_text(text):
 def extrahera_nummer(filename):
     match = re.match(r'(\d+)', filename)
     return int(match.group()) if match else 999
+
+def titel_fran_filnamn(filename):
+    base = os.path.splitext(os.path.basename(filename))[0]
+    return re.sub(r'[_-]+', ' ', base).strip().title()
+
+def make_unique_slug(base_slug, used_slugs):
+    if base_slug not in used_slugs:
+        used_slugs.add(base_slug)
+        return base_slug
+    stem, ext = os.path.splitext(base_slug)
+    idx = 2
+    while True:
+        candidate = f"{stem}_{idx}{ext}"
+        if candidate not in used_slugs:
+            used_slugs.add(candidate)
+            return candidate
+        idx += 1
+
+def html_till_text(raw_html):
+    cleaned = re.sub(r'<script.*?</script>', ' ', raw_html, flags=re.IGNORECASE | re.DOTALL)
+    cleaned = re.sub(r'<style.*?</style>', ' ', cleaned, flags=re.IGNORECASE | re.DOTALL)
+    cleaned = re.sub(r'<[^>]+>', '\n', cleaned)
+    cleaned = html.unescape(cleaned)
+    return cleaned
+
+def skapa_entries_fran_rader(lines, cat, fallback_title):
+    entries = []
+    current = None
+    has_titel_blocks = False
+
+    for line in lines:
+        txt = line.strip()
+        if not txt:
+            continue
+        if txt.lower().startswith('titel:'):
+            title = txt.split(':', 1)[1].strip() or fallback_title
+            current = {'title': title, 'cat': cat, 'content': []}
+            entries.append(current)
+            has_titel_blocks = True
+            continue
+        if current is not None:
+            current['content'].append("<p>" + stada_text(txt) + "</p>")
+
+    if has_titel_blocks:
+        return entries
+
+    content = ["<p>" + stada_text(line.strip()) + "</p>" for line in lines if line.strip()]
+    if content:
+        return [{'title': fallback_title, 'cat': cat, 'content': content}]
+    return []
+
+def parse_source_file(path, cat):
+    fallback_title = titel_fran_filnamn(path)
+    lower = path.lower()
+
+    try:
+        if lower.endswith('.docx'):
+            doc = Document(path)
+            lines = [p.text for p in doc.paragraphs]
+            return skapa_entries_fran_rader(lines, cat, fallback_title)
+
+        if lower.endswith('.txt'):
+            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = f.read().splitlines()
+            return skapa_entries_fran_rader(lines, cat, fallback_title)
+
+        if lower.endswith(('.html', '.htm')):
+            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                lines = html_till_text(f.read()).splitlines()
+            return skapa_entries_fran_rader(lines, cat, fallback_title)
+    except Exception:
+        return []
+
+    return []
 
 # --- 3. DESIGN (CSS) ---
 CSS_CODE = """
@@ -135,25 +215,31 @@ def read_filmlista():
 
 def process_manus():
     data_list = []
+    used_slugs = set()
     for cat in CATEGORIES:
-        path = os.path.join(BASE_INPUT, cat)
-        if not os.path.exists(path): continue
-        files = sorted([f for f in os.listdir(path) if f.endswith(".docx") and not f.startswith("~$")], key=extrahera_nummer)
-        for file in files:
-            try:
-                doc = Document(os.path.join(path, file))
-                current = None
-                for p in doc.paragraphs:
-                    txt = p.text.strip()
-                    if not txt: continue
-                    if txt.lower().startswith("titel:"):
-                        t = txt.replace("Titel:", "").replace("TITEL:", "").strip()
-                        current = {'title': t, 'cat': cat, 'content': [], 'fname': slugify(t)}
-                        data_list.append(current)
-                    elif current:
-                        current['content'].append("<p>" + stada_text(txt) + "</p>")
-            except: continue
-    for i in data_list: i['content'] = "".join(i['content'])
+        source_dirs = [os.path.join(BASE_INPUT, cat)] + EXTRA_CATEGORY_DIRS.get(cat, [])
+        for source_dir in source_dirs:
+            if not os.path.isdir(source_dir):
+                continue
+
+            files = []
+            for name in os.listdir(source_dir):
+                lower = name.lower()
+                if name.startswith('~$'):
+                    continue
+                if lower.endswith(('.docx', '.txt', '.html', '.htm')):
+                    files.append(name)
+
+            files = sorted(files, key=lambda f: (extrahera_nummer(f), f.lower()))
+            for file in files:
+                path = os.path.join(source_dir, file)
+                entries = parse_source_file(path, cat)
+                for entry in entries:
+                    entry['fname'] = make_unique_slug(slugify(entry['title']), used_slugs)
+                    data_list.append(entry)
+
+    for i in data_list:
+        i['content'] = "".join(i['content'])
     return data_list
 
 def process_pressklipp():
