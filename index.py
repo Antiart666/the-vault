@@ -73,6 +73,21 @@ def clean_review_title(text):
     title = re.sub(r'\s{2,}', ' ', title).strip(' -_')
     return title or normalize_title(text)
 
+def extract_publication_note(text):
+    title = normalize_title(text)
+    if not title:
+        return ''
+
+    # Hitta och behåll var texten publicerats.
+    m = re.search(r'\b(publicerad i [^\]\)]+)', title, flags=re.IGNORECASE)
+    if not m:
+        return ''
+
+    note = m.group(1).strip(' .;,:-_')
+    if not note:
+        return ''
+    return note[0].upper() + note[1:]
+
 def normalize_title_for_category(cat, text):
     title = normalize_title(text)
     if cat in {'Recensioner', 'Artiklar'}:
@@ -182,8 +197,13 @@ def skapa_entries_fran_rader(lines, cat, fallback_title):
         if not txt:
             continue
         if txt.lower().startswith('titel:'):
-            title = normalize_title(txt.split(':', 1)[1].strip() or fallback_title)
+            raw_title = txt.split(':', 1)[1].strip() or fallback_title
+            title = normalize_title_for_category(cat, raw_title)
             current = {'title': title, 'cat': cat, 'content': []}
+            if cat in {'Recensioner', 'Artiklar'}:
+                publication_note = extract_publication_note(raw_title)
+                if publication_note:
+                    current['content'].append("<p><em>" + stada_text(publication_note) + "</em></p>")
             entries.append(current)
             has_titel_blocks = True
             continue
