@@ -281,4 +281,4 @@ def write_site():
 
 if __name__ == "__main__":
     write_site()
-    print("✅ Uppdatering klar! Favicon är nu logo.png och sidan är redo för Netlify.")
+    print("✅ Uppdatering klar! Favicon är nu logo.png och sidan är redo för Vercel.")
