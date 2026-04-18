@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import re
 import streamlit.components.v1 as components
 import docx
 
@@ -32,6 +33,38 @@ def samla_filer(folder_paths):
     return filer
 
 
+def samla_filer_fran_kategorisida(category_page):
+    filer = {}
+    if not os.path.isfile(category_page):
+        return filer
+
+    with open(category_page, "r", encoding="utf-8", errors="ignore") as f:
+        html = f.read()
+
+    match = re.search(
+        r'<div class="reading-room">(.*?)</div>\s*<script',
+        html,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    if not match:
+        return filer
+
+    block = match.group(1)
+    for href in re.findall(r'href="([^"]+)"', block, flags=re.IGNORECASE):
+        if not href.lower().endswith(".html"):
+            continue
+
+        full_path = os.path.normpath(href)
+        if not os.path.isfile(full_path):
+            continue
+
+        filnamn = os.path.basename(full_path)
+        if filnamn not in filer:
+            filer[filnamn] = full_path
+
+    return filer
+
+
 def visa_fil(fil_stig):
     ext = fil_stig.lower()
     try:
@@ -52,26 +85,38 @@ def visa_fil(fil_stig):
 
 
 kategorier = {
-    "Intervjuer": ["interviews", "Manus/Intervjuer"],
-    "Artiklar": ["articles", "Manus/Artiklar"],
-    "Recensioner": ["reviews", "Manus/Recensioner"],
+    "Intervjuer": {
+        "mappar": ["interviews", "Manus/Intervjuer"],
+        "kategorisida": "cat_intervjuer.html",
+    },
+    "Artiklar": {
+        "mappar": ["articles", "Manus/Artiklar"],
+        "kategorisida": "cat_artiklar.html",
+    },
+    "Recensioner": {
+        "mappar": ["reviews", "Manus/Recensioner"],
+        "kategorisida": "cat_recensioner.html",
+    },
 }
 
 vald_kategori = st.selectbox("Kategori", list(kategorier.keys()))
-mappar = hitta_kandidatmappar(kategorier[vald_kategori])
+mappar = hitta_kandidatmappar(kategorier[vald_kategori]["mappar"])
+kategorisida = kategorier[vald_kategori]["kategorisida"]
 
-if not mappar:
-    st.error(f"Hittar inga mappar för kategorin {vald_kategori}.")
+filer = samla_filer(mappar)
+filer_fran_kategorisida = samla_filer_fran_kategorisida(kategorisida)
+
+for filnamn, full_path in filer_fran_kategorisida.items():
+    if filnamn not in filer:
+        filer[filnamn] = full_path
+
+if not filer:
+    st.write(f"Inga filer hittades i kategorin {vald_kategori}.")
 else:
-    filer = samla_filer(mappar)
+    val = st.selectbox(
+        vald_kategori,
+        [f"-- Välj en text i {vald_kategori.lower()} --"] + sorted(filer.keys()),
+    )
 
-    if not filer:
-        st.write(f"Inga filer hittades i kategorin {vald_kategori}.")
-    else:
-        val = st.selectbox(
-            vald_kategori,
-            [f"-- Välj en text i {vald_kategori.lower()} --"] + sorted(filer.keys()),
-        )
-
-        if not val.startswith("-- Välj"):
-            visa_fil(filer[val])
+    if not val.startswith("-- Välj"):
+        visa_fil(filer[val])
