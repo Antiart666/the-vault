@@ -31,11 +31,20 @@ def stada_text(text):
     return re.sub(r'([.,!?;:])([a-zA-ZåäöÅÄÖ])', r'\1 \2', text)
 
 def normalize_title(text):
-    """Konvertera titel till korrekt Title Case format"""
+    """Normalisera titel utan att tvinga fram Title Case på varje ord."""
     if not text:
         return text
-    # Först konvertera till Title Case
-    normalized = text.strip().title()
+
+    normalized = re.sub(r'\s{2,}', ' ', text).strip()
+    if not normalized:
+        return normalized
+
+    # Om titeln är helt versal/gemen: gör den läsbar i enkel meningsform.
+    if normalized.isupper() or normalized.islower():
+        lowered = normalized.lower()
+        return re.sub(r'([a-zåäö])', lambda m: m.group(1).upper(), lowered, count=1)
+
+    # Vid blandad case antar vi att källan redan har avsedd formatering.
     return normalized
 
 def clean_review_title(text):
