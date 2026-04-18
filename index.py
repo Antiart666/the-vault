@@ -11,6 +11,7 @@ BASE_INPUT = 'Manus'
 CSV_FILE = 'Filmlista - Blad1.csv'
 PDF_INPUT = 'Pressklipp'
 CATEGORIES = ['Recensioner', 'Artiklar', 'Uppsats', 'Intervjuer', 'Filmhistoria']
+ALPHABETICAL_CATEGORIES = {'Recensioner', 'Artiklar', 'Intervjuer'}
 EXTRA_CATEGORY_DIRS = {
     'Recensioner': ['reviews'],
     'Artiklar': ['articles'],
@@ -323,6 +324,14 @@ def process_manus():
         if cat == 'Intervjuer':
             for entry in parse_category_page_entries(cat):
                 lagg_till_entry(entry)
+
+    ordered = []
+    for cat in CATEGORIES:
+        cat_items = [item for item in data_list if item['cat'] == cat]
+        if cat in ALPHABETICAL_CATEGORIES:
+            cat_items = sorted(cat_items, key=lambda i: i['title'].lower())
+        ordered.extend(cat_items)
+    data_list = ordered
 
     for i in data_list:
         i['content'] = "".join(i['content'])
