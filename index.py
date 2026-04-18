@@ -131,6 +131,8 @@ def normalize_title_for_category(cat, text):
         return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     if cat == 'Intervjuer' and 'psychopathic' in title.lower() and 'morghen' in title.lower():
         return 'John Morghen - From Psychopathic to Ecclesiastic!'
+    if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'interview' not in title.lower():
+        return 'Jack Stevenson and the Swedish sin!'
     return title
 
 def extrahera_nummer(filename):
