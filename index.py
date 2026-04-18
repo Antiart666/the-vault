@@ -65,7 +65,7 @@ def clean_review_title(text):
 
 def normalize_title_for_category(cat, text):
     title = normalize_title(text)
-    if cat == 'Recensioner':
+    if cat in {'Recensioner', 'Artiklar'}:
         return clean_review_title(title)
     return title
 
