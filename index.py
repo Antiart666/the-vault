@@ -92,6 +92,8 @@ def normalize_title_for_category(cat, text):
     title = normalize_title(text)
     if cat in {'Recensioner', 'Artiklar'}:
         return clean_review_title(title)
+    if cat == 'Filmhistoria' and title == 'Filmkompendie VT 2001 – av Christer Persson och Anne Hammenroth':
+        return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     return title
 
 def extrahera_nummer(filename):
