@@ -37,6 +37,38 @@ def normalize_title(text):
     normalized = text.strip().title()
     return normalized
 
+def clean_review_title(text):
+    title = normalize_title(text)
+    if not title:
+        return title
+
+    # Klipp bort vanliga metadata-suffix i recensionsrubriker.
+    for marker in (' publicerad i ', ' skribent ', ' by '):
+        idx = title.lower().find(marker)
+        if idx > 0:
+            title = title[:idx].strip()
+            break
+
+    # Ta bort avslutande parenteser om de innehåller metadata, men behåll t.ex. årtal.
+    while True:
+        m = re.search(r'\s*\(([^()]*)\)\s*$', title)
+        if not m:
+            break
+        paren_text = m.group(1).lower()
+        if any(token in paren_text for token in ('publicerad', 'skribent', 'violent vision', 'by ')):
+            title = title[:m.start()].strip()
+        else:
+            break
+
+    title = re.sub(r'\s{2,}', ' ', title).strip(' -_')
+    return title or normalize_title(text)
+
+def normalize_title_for_category(cat, text):
+    title = normalize_title(text)
+    if cat == 'Recensioner':
+        return clean_review_title(title)
+    return title
+
 def extrahera_nummer(filename):
     match = re.match(r'(\d+)', filename)
     return int(match.group()) if match else 999
@@ -292,10 +324,13 @@ def process_manus():
     seen_by_cat = {cat: set() for cat in CATEGORIES}
 
     def lagg_till_entry(entry):
-        normalized_title = entry['title'].strip().lower()
+        raw_title = entry['title'].strip()
+        display_title = normalize_title_for_category(entry['cat'], raw_title)
+        normalized_title = display_title.lower()
         if normalized_title in seen_by_cat.get(entry['cat'], set()):
             return
-        entry['fname'] = make_unique_slug(slugify(entry['title']), used_slugs)
+        entry['fname'] = make_unique_slug(slugify(raw_title), used_slugs)
+        entry['title'] = display_title
         data_list.append(entry)
         seen_by_cat.setdefault(entry['cat'], set()).add(normalized_title)
 
