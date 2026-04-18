@@ -50,6 +50,39 @@ SWEGORE_TITLES = {
     'scandinavian blue: erotic cinema of',
 }
 
+# Artiklar ursprungligen publicerade på bloggarna Dawn of the Blog och Mondo Madness
+BLOG_TITLES = {
+    'dokumentärfilm',
+    "don\u2019t call me motherfucker, motherfucker",
+    "don\u2019t call me motherfucker, motherfucker!",
+    'exploitation: den svårfångade genren',
+    'filmtips till halloween.',
+    'filmtips till halloween',
+    'hur jag slutade oroa mig om bomben och istället älska dess efterdyningar i italiensk filmindustri',
+    'hur jag slutade oroa mig om bomben och istället älska dess efterdyningar i italiensk filmindustri!',
+    'komedier',
+    'mondo movie madness – varför tittar vi?',
+    'mondo movie madness  varför tittar vi',
+    'människans gryning... full av monster, bystiga tjejer och sämsta smaken',
+    'människans gryning... full av monster, bystiga tjejer och sämsskinnsbeklädda hjältar.',
+    'riktigt otäcka filmer!',
+    'riktigt otäcka filmer',
+    'russ meyer: thanks for the mammaries!',
+    'russ meyer thanks for the mammaries',
+    'sex lögner om videovåld',
+    'tack för minnet!',
+    'tack för minnet',
+    'the big four eller en thrashares bekännelser!',
+    'the big four eller en thrashares bekännelser',
+    'the dead walk!',
+    'the dead walk',
+    'the texas chainsaw massacre – 40 år',
+    'the texas chainsaw massacre  40 år',
+    'these reboots are made for stalking!',
+    'these reboots are made for stalking',
+    'these reboots are made for stalking! fredag den 13:e',
+}
+
 # --- 2. HJÄLPFUNKTIONER ---
 def slugify(text):
     if not text: return "sida.html"
@@ -410,6 +443,12 @@ def process_manus():
             content = entry['content']
             if not any('publicerad' in p.lower() for p in content):
                 entry['content'] = [swegore_note] + content
+        # Injicera blogg-not om titeln matchar och ingen publikationsnot redan finns
+        if entry['cat'] == 'Artiklar' and normalized_title in BLOG_TITLES:
+            blog_note = "<p><em>Artikel från bloggarna Dawn of the Blog och Mondo Madness</em></p>"
+            content = entry['content']
+            if not any('dawn of the blog' in p.lower() or 'mondo madness' in p.lower() for p in content):
+                entry['content'] = [blog_note] + content
         data_list.append(entry)
         seen_by_cat.setdefault(entry['cat'], set()).add(normalized_title)
 
