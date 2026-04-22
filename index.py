@@ -276,6 +276,11 @@ def skapa_entries_fran_rader(lines, cat, fallback_title):
         if txt.lower().startswith('titel:'):
             raw_title = txt.split(':', 1)[1].strip() or fallback_title
             title = normalize_title_for_category(cat, raw_title)
+            # Argento speaks! hör till Intervjuer – hoppas över i Artiklar (finns i interviews/)
+            if cat == 'Artiklar' and 'argento speaks' in raw_title.lower():
+                current = None
+                has_titel_blocks = True
+                continue
             current = {'title': title, 'cat': cat, 'content': []}
             if cat in {'Recensioner', 'Artiklar'}:
                 publication_note = extract_publication_note(raw_title)
