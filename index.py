@@ -234,6 +234,22 @@ def hamta_html_rader_och_titel(path, fallback_title):
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     return (parsed_title or normalize_title(fallback_title)), lines
 
+def rad_ar_rubrik(rad):
+    txt = rad.strip()
+    if not txt:
+        return False
+    # Matchar rubriker som "I. Inledning", "1. Bakgrund", "1.1. Metod"
+    return bool(re.match(r'^(?:[IVXLCDM]+\.\s+\S.*|\d+\.(?:\d+\.)?\s+\S.*)$', txt, flags=re.IGNORECASE))
+
+def rad_till_paragraf(rad):
+    txt = stada_text(rad)
+    css_class = ' class="section-heading"' if rad_ar_rubrik(rad) else ''
+    return f"<p{css_class}>" + txt + "</p>"
+
+def markera_rubriker_i_html(content_html):
+    pattern = re.compile(r'<p>(\s*(?:[IVXLCDM]+\.\s+[^<]+|\d+\.(?:\d+\.)?\s+[^<]+)\s*)</p>', re.IGNORECASE)
+    return pattern.sub(r'<p class="section-heading">\1</p>', content_html)
+
 def parse_category_page_entries(cat):
     entries = []
     cat_page = f"cat_{slugify(cat)}"
@@ -258,7 +274,7 @@ def parse_category_page_entries(cat):
         if not lines:
             continue
 
-        content = ["<p>" + stada_text(line) + "</p>" for line in lines]
+        content = [rad_till_paragraf(line) for line in lines]
         if content:
             entries.append({'title': title, 'cat': cat, 'content': content})
 
@@ -290,12 +306,12 @@ def skapa_entries_fran_rader(lines, cat, fallback_title):
             has_titel_blocks = True
             continue
         if current is not None:
-            current['content'].append("<p>" + stada_text(txt) + "</p>")
+            current['content'].append(rad_till_paragraf(txt))
 
     if has_titel_blocks:
         return entries
 
-    content = ["<p>" + stada_text(line.strip()) + "</p>" for line in lines if line.strip()]
+    content = [rad_till_paragraf(line.strip()) for line in lines if line.strip()]
     if content:
         return [{'title': normalize_title(fallback_title), 'cat': cat, 'content': content}]
     return []
@@ -379,6 +395,7 @@ body {
 
 .reading-room { background-color: var(--paper-base); color: var(--text-dark); max-width: 1000px; margin: 60px 5% 80px 400px; padding: 60px 50px; font-family: 'Lora', serif; border-radius: 8px; box-shadow: 40px 40px 90px rgba(0,0,0,0.8); position: relative; }
 .reading-room h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; text-align: center; margin-bottom: 30px; font-style: italic; }
+.reading-room .content p.section-heading { margin-top: 1.1em; }
 
 .film-table { width: 100%; border-collapse: collapse; margin-top: 20px; table-layout: fixed; }
 .film-table td { padding: 12px; border-bottom: 1px solid rgba(0,0,0,0.1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -493,7 +510,7 @@ def process_manus():
     data_list = ordered
 
     for i in data_list:
-        i['content'] = "".join(i['content'])
+        i['content'] = markera_rubriker_i_html("".join(i['content']))
     return data_list
 
 def process_pressklipp():
