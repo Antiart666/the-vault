@@ -165,6 +165,8 @@ def normalize_title_for_category(cat, text):
         return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     if cat == 'Intervjuer' and 'psychopathic' in title.lower() and 'morghen' in title.lower():
         return 'John Morghen - From Psychopathic to Ecclesiastic!'
+    if cat == 'Intervjuer' and title.lower().startswith('intervju: jack stevenson'):
+        return 'Jack Stevenson and the Swedish sin!'
     if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'violent vision #1, 1999' in title.lower():
         return 'Jack Stevenson intervju 1999'
     return title
@@ -667,6 +669,15 @@ def write_site():
 
     for item in site_data:
         with open(item['fname'], "w", encoding="utf-8") as f: f.write(render(f'<div class="reading-room"><h1>{item["title"]}</h1><div class="content">{item["content"]}</div>[[NAV_BTNS]]</div>'))
+
+    # Legacy URL compatibility: keep old Jack Stevenson interview path alive.
+    legacy_path = "intervju_jack_stevenson.html"
+    canonical_path = "jack_stevenson_and_the_swedish_sin.html"
+    if os.path.isfile(canonical_path):
+        with open(canonical_path, "r", encoding="utf-8", errors="ignore") as src:
+            canonical_html = src.read()
+        with open(legacy_path, "w", encoding="utf-8") as dst:
+            dst.write(canonical_html)
 
     for p in pressklipp:
         with open(p['fname'], "w", encoding="utf-8") as f:
