@@ -165,7 +165,7 @@ def normalize_title_for_category(cat, text):
         return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     if cat == 'Intervjuer' and 'psychopathic' in title.lower() and 'morghen' in title.lower():
         return 'John Morghen - From Psychopathic to Ecclesiastic!'
-    if cat == 'Intervjuer' and 'jack stevenson' in title.lower():
+    if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'violent vision #1, 1999' in title.lower():
         return 'Jack Stevenson intervju 1999'
     return title
 
