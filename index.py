@@ -165,10 +165,8 @@ def normalize_title_for_category(cat, text):
         return 'Filmkompendie 2001 av Christer Persson och Anne Hammenroth'
     if cat == 'Intervjuer' and 'psychopathic' in title.lower() and 'morghen' in title.lower():
         return 'John Morghen - From Psychopathic to Ecclesiastic!'
-    if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'interview' not in title.lower():
-        return 'Jack Stevenson and the Swedish sin!'
-    if cat == 'Intervjuer' and 'jack stevenson' in title.lower() and 'interview' in title.lower():
-        return 'Jack Stevenson 1999'
+    if cat == 'Intervjuer' and 'jack stevenson' in title.lower():
+        return 'Jack Stevenson intervju 1999'
     return title
 
 def extrahera_nummer(filename):
@@ -238,16 +236,38 @@ def rad_ar_rubrik(rad):
     txt = rad.strip()
     if not txt:
         return False
-    # Matchar rubriker som "I. Inledning", "1. Bakgrund", "1.1. Metod"
-    return bool(re.match(r'^(?:[IVXLCDM]+\.\s+\S.*|\d+\.(?:\d+\.)?\s+\S.*)$', txt, flags=re.IGNORECASE))
+    # Matchar rubriker som "I. Inledning", "1. Bakgrund", "1.2 Mondofilm", "1.3. Metod".
+    # Kräver punkt efter första siffran för att undvika fotnotrader som "1 Källa".
+    return bool(re.match(r'^(?:[IVXLCDM]+\.\s+\S.*|\d+\.(?:\d+\.)*\d*\s+\S.*)$', txt, flags=re.IGNORECASE))
+
+def rad_ar_markdown_rubrik(rad):
+    return bool(re.match(r'^#{2,3}\s+\S', rad.strip()))
+
+def rendera_markdown_inline(text):
+    # Enkel markdown-stöd för **fet** och *kursiv* i txt-källor.
+    rendered = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
+    rendered = re.sub(r'(?<!\*)\*(.+?)\*(?!\*)', r'<em>\1</em>', rendered)
+    return rendered
 
 def rad_till_paragraf(rad):
-    txt = stada_text(rad)
-    css_class = ' class="section-heading"' if rad_ar_rubrik(rad) else ''
-    return f"<p{css_class}>" + txt + "</p>"
+    txt = rad.strip()
+
+    if rad_ar_markdown_rubrik(txt):
+        rubrik_text = re.sub(r'^#{2,3}\s+', '', txt)
+        rubrik_text = rendera_markdown_inline(stada_text(rubrik_text))
+        if '<strong>' not in rubrik_text:
+            rubrik_text = f"<strong>{rubrik_text}</strong>"
+        return f"<p class=\"section-heading\">{rubrik_text}</p>"
+
+    paragraf_text = stada_text(txt)
+    if '**' in txt or re.search(r'(?<!\*)\*[^*]+\*(?!\*)', txt):
+        paragraf_text = rendera_markdown_inline(paragraf_text)
+
+    css_class = ' class="section-heading"' if rad_ar_rubrik(txt) else ''
+    return f"<p{css_class}>" + paragraf_text + "</p>"
 
 def markera_rubriker_i_html(content_html):
-    pattern = re.compile(r'<p>(\s*(?:[IVXLCDM]+\.\s+[^<]+|\d+\.(?:\d+\.)?\s+[^<]+)\s*)</p>', re.IGNORECASE)
+    pattern = re.compile(r'<p>(\s*(?:[IVXLCDM]+\.\s+[^<]+|\d+\.(?:\d+\.)*\d*\s+[^<]+)\s*)</p>', re.IGNORECASE)
     return pattern.sub(r'<p class="section-heading">\1</p>', content_html)
 
 def parse_category_page_entries(cat):
@@ -458,7 +478,8 @@ def process_manus():
         normalized_title = display_title.lower()
         if normalized_title in seen_by_cat.get(entry['cat'], set()):
             return
-        entry['fname'] = make_unique_slug(slugify(raw_title), used_slugs)
+        # Bygg slug från normaliserad visningstitel för stabila och korta filnamn.
+        entry['fname'] = make_unique_slug(slugify(display_title), used_slugs)
         entry['title'] = display_title
         # Injicera SweGore-not om titeln matchar och ingen publikationsnot redan finns
         if entry['cat'] == 'Recensioner' and normalized_title in SWEGORE_TITLES:
