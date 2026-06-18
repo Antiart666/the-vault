@@ -499,7 +499,8 @@ def process_manus():
         seen_by_cat.setdefault(entry['cat'], set()).add(normalized_title)
 
     for cat in CATEGORIES:
-        source_dirs = [os.path.join(BASE_INPUT, cat)] + EXTRA_CATEGORY_DIRS.get(cat, [])
+        # Prioritize EXTRA_CATEGORY_DIRS (articles/, reviews/, interviews/) over Manus/ to prevent truncation
+        source_dirs = EXTRA_CATEGORY_DIRS.get(cat, []) + [os.path.join(BASE_INPUT, cat)]
         for source_dir in source_dirs:
             if not os.path.isdir(source_dir):
                 continue
