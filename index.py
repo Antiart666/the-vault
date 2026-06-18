@@ -673,7 +673,13 @@ def write_site():
         nav_btns = '<div class="page-nav"><a id="prevBtn" class="nav-btn hidden">← föregående</a><a id="nextBtn" class="nav-btn hidden">nästa →</a></div>' if show_btns else ''
         return t.replace("[[BODY]]", body.replace("[[NAV_BTNS]]", nav_btns))
 
+    # Protected files that should not be regenerated (to preserve manually maintained versions)
+    PROTECTED_FILES = {'the_dead_walk.html'}
+    
     for item in site_data:
+        # Skip protected files to avoid overwriting manually maintained content
+        if item['fname'] in PROTECTED_FILES:
+            continue
         with open(item['fname'], "w", encoding="utf-8") as f: f.write(render(f'<div class="reading-room"><h1>{item["title"]}</h1><div class="content">{item["content"]}</div>[[NAV_BTNS]]</div>'))
 
     # Legacy URL compatibility: keep old Jack Stevenson interview path alive.
