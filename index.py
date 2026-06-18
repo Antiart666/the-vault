@@ -544,6 +544,11 @@ def process_pressklipp():
             ext = os.path.splitext(f)[1].lower()
             title = f.replace(ext, "").replace("_", " ")
             files_list.append({'title': title, 'filename': f, 'fname': slugify("press_" + title), 'is_img': ext != '.pdf'})
+    # Sortera Pressklipp alfabetiskt enligt svensk bokstavsordning.
+    def swedish_sort_key(value):
+        normalized = value.lower().strip()
+        return normalized.translate(str.maketrans({'å': '{', 'ä': '|', 'ö': '}'}))
+    files_list = sorted(files_list, key=lambda i: swedish_sort_key(i['title']))
     return files_list
 
 # --- 5. GENERERING ---
